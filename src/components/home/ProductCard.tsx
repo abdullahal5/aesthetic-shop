@@ -1,92 +1,162 @@
 "use client";
 
 import Link from "next/link";
-import { Star, ShoppingCart } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { Star, ShoppingBag, ArrowUpRight } from "lucide-react";
+import { Product } from "@/types";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { useCart } from "@/hooks/useCart";
 
 interface ProductCardProps {
-  id: string;
-  name: string;
-  price: number;
-  originalPrice?: number;
-  image: string;
-  rating: number;
-  reviewCount: number;
-  slug: string;
+  product: Product;
 }
 
-export default function ProductCard({
-  id,
-  name,
-  price,
-  originalPrice,
-  image,
-  rating,
-  reviewCount,
-  slug,
-}: ProductCardProps) {
-  return (
-    <Card className="group overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300">
-      <Link href={`/products/${slug}`}>
-        <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center overflow-hidden">
-          <div className="text-6xl transition-transform duration-300 group-hover:scale-110">
-            {image}
-          </div>
+export default function ProductCard({ product }: ProductCardProps) {
+  const { addItem } = useCart();
 
-          {/* Discount Badge */}
-          {originalPrice && (
-            <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded">
-              {Math.round(((originalPrice - price) / originalPrice) * 100)}% OFF
-            </div>
+  const avgRating =
+    product.reviews.length > 0
+      ? product.reviews.reduce((s, r) => s + r.rating, 0) /
+        product.reviews.length
+      : 0;
+
+  const discount = product.originalPrice
+    ? Math.round(
+        ((product.originalPrice - product.price) / product.originalPrice) * 100,
+      )
+    : null;
+
+  const handleAdd = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem({
+      productId: product.id,
+      name: product.name,
+      price: product.price,
+      quantity: 1,
+      image: product.images[0].url,
+      slug: product.slug,
+    });
+    toast.success("Added to cart", { description: product.name });
+  };
+
+  return (
+    <Link
+      href={`/shop/${product.slug}`}
+      className="group block bg-white rounded-2xl overflow-hidden border border-stone-100 hover:border-stone-200 hover:shadow-xl hover:shadow-stone-100/60 transition-all duration-300 hover:-translate-y-1"
+    >
+      {/* Image */}
+      <div
+        className="relative aspect-[4/5] overflow-hidden"
+        style={{ backgroundColor: "var(--brand-sand)" }}
+      >
+        <Image
+          src={product.images[0].url}
+          alt={product.images[0].alt}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        />
+
+        {/* Badges */}
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5">
+          {discount && (
+            <Badge
+              className="text-white border-0 text-xs font-bold rounded-full px-2.5"
+              style={{ backgroundColor: "var(--brand-earth)" }}
+            >
+              -{discount}%
+            </Badge>
+          )}
+          {product.stock <= 5 && product.stock > 0 && (
+            <Badge
+              variant="outline"
+              className="bg-white/90 text-red-600 border-red-200 text-xs rounded-full px-2.5"
+            >
+              Only {product.stock} left
+            </Badge>
           )}
         </div>
-      </Link>
 
-      <div className="p-4">
-        {/* Rating */}
-        <div className="flex items-center gap-2 mb-2">
-          <div className="flex gap-0.5">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`w-3.5 h-3.5 ${
-                  i < rating
-                    ? "fill-yellow-400 text-yellow-400"
-                    : "text-gray-300"
-                }`}
-              />
-            ))}
-          </div>
-          <span className="text-xs text-gray-500">({reviewCount})</span>
+        {/* Quick add on hover */}
+        <button
+          onClick={handleAdd}
+          className="absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-200 translate-y-2 group-hover:translate-y-0"
+          style={{ backgroundColor: "var(--brand-dark)", color: "white" }}
+          aria-label="Add to cart"
+        >
+          <ShoppingBag size={15} />
+        </button>
+
+        {/* Arrow icon */}
+        <div className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-md">
+          <ArrowUpRight size={14} style={{ color: "var(--brand-dark)" }} />
+        </div>
+      </div>
+
+      {/* Info */}
+      <div className="p-4 space-y-2.5">
+        <div>
+          <p
+            className="text-xs font-medium uppercase tracking-widest mb-1"
+            style={{ color: "var(--brand-sage)" }}
+          >
+            {product.category}
+          </p>
+          <h3
+            className="font-semibold text-sm leading-snug transition-colors duration-200 line-clamp-1"
+            style={{ color: "var(--brand-dark)" }}
+          >
+            {product.name}
+          </h3>
+          <p className="text-xs mt-1 line-clamp-1" style={{ color: "#8B7B70" }}>
+            {product.tagline}
+          </p>
         </div>
 
-        {/* Product Name */}
-        <Link href={`/products/${slug}`}>
-          <h3 className="font-semibold text-gray-900 mb-2 hover:text-gray-600 transition-colors line-clamp-2 min-h-[3rem]">
-            {name}
-          </h3>
-        </Link>
+        {/* Rating */}
+        {avgRating > 0 && (
+          <div className="flex items-center gap-1.5">
+            <div className="flex">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <Star
+                  key={s}
+                  size={11}
+                  className={
+                    s <= Math.round(avgRating)
+                      ? "fill-amber-400 text-amber-400"
+                      : "text-stone-200"
+                  }
+                />
+              ))}
+            </div>
+            <span className="text-xs text-stone-500">
+              {avgRating.toFixed(1)} ({product.reviews.length})
+            </span>
+          </div>
+        )}
 
         {/* Price */}
-        <div className="flex items-baseline gap-2 mb-4">
-          <span className="text-xl font-bold text-gray-900">৳{price}</span>
-          {originalPrice && (
-            <span className="text-sm text-gray-500 line-through">
-              ৳{originalPrice}
+        <div className="flex items-center justify-between pt-0.5">
+          <div className="flex items-baseline gap-2">
+            <span
+              className="text-lg font-bold"
+              style={{ color: "var(--brand-dark)" }}
+            >
+              ৳{product.price.toLocaleString()}
             </span>
-          )}
+            {product.originalPrice && (
+              <span className="text-xs text-stone-400 line-through">
+                ৳{product.originalPrice.toLocaleString()}
+              </span>
+            )}
+          </div>
+          <span className="text-xs" style={{ color: "var(--brand-sage)" }}>
+            {product.totalSold} sold
+          </span>
         </div>
-
-        {/* Add to Cart Button */}
-        <Button
-          className="w-full bg-gray-900 hover:bg-gray-800 text-white"
-          onClick={() => console.log("Add to cart:", id)}
-        >
-          <ShoppingCart className="w-4 h-4 mr-2" />
-          Add to Cart
-        </Button>
       </div>
-    </Card>
+    </Link>
   );
 }

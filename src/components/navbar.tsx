@@ -1,147 +1,164 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingCart, Search, Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ShoppingBag, Menu, Sparkles, X } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useCart } from "@/hooks/cartContext";
+
+const navLinks = [
+  { href: "/", label: "Home" },
+  { href: "/shop", label: "Shop" },
+];
 
 export default function Navbar() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      console.log("Search:", searchQuery);
-      // Add your search logic here
-    }
-  };
+  const { count, mounted } = useCart();
+  const [open, setOpen] = useState(false);
 
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo and Brand Name */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-8 h-8 bg-gray-900 rounded"></div>
-            <span className="text-xl font-semibold text-gray-900">
-              AestheticBD
-            </span>
-          </Link>
-
-          {/* Search Bar - Desktop */}
-          <form
-            onSubmit={handleSearch}
-            className="hidden md:block flex-1 max-w-md mx-8"
+    <header
+      className="sticky top-0 z-50 w-full border-b border-stone-200/60"
+      style={{
+        backgroundColor: "rgba(253,250,246,0.92)",
+        backdropFilter: "blur(12px)",
+      }}
+    >
+      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        {/* Logo */}
+        <Link
+          href="/"
+          className="flex items-center gap-2 group"
+          aria-label="AuraStore Home"
+        >
+          <div
+            className="w-7 h-7 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: "var(--brand-earth)" }}
           >
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 pr-10 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
-              />
-              <button
-                type="submit"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                <Search className="w-4 h-4" />
-              </button>
-            </div>
-          </form>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
-            <Link
-              href="/"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Home
-            </Link>
-            <Link
-              href="/products"
-              className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Products
-            </Link>
-            <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative">
-                <ShoppingCart className="w-5 h-5" />
-                <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  0
-                </span>
-              </Button>
-            </Link>
+            <Sparkles size={14} className="text-white" />
           </div>
+          <div className="flex items-baseline gap-1">
+            <span
+              className="text-lg font-bold tracking-tight"
+              style={{ color: "var(--brand-dark)" }}
+            >
+              Aura
+            </span>
+            <span
+              className="text-lg font-light"
+              style={{ color: "var(--brand-earth)" }}
+            >
+              Store
+            </span>
+          </div>
+        </Link>
 
-          {/* Mobile Menu Button */}
-          <div className="flex items-center gap-2 md:hidden">
-            <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative">
-                <ShoppingCart className="w-5 h-5" />
-                <span className="absolute -top-1 -right-1 bg-gray-900 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  0
-                </span>
-              </Button>
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-8">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-sm font-medium transition-colors duration-200"
+              style={{ color: "var(--brand-dark)", opacity: 0.7 }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
+            >
+              {link.label}
             </Link>
+          ))}
+        </nav>
+
+        {/* Cart + Mobile */}
+        <div className="flex items-center gap-2">
+          <Link href="/cart" aria-label={`Cart — ${mounted ? count : 0} items`}>
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="rounded-full relative hover:bg-stone-100"
             >
-              {isMobileMenuOpen ? (
-                <X className="w-5 h-5" />
-              ) : (
-                <Menu className="w-5 h-5" />
+              <ShoppingBag size={20} style={{ color: "var(--brand-dark)" }} />
+              {mounted && count > 0 && (
+                <span
+                  className="absolute -top-0.5 -right-0.5 w-5 h-5 text-white text-[10px] font-bold rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: "var(--brand-earth)" }}
+                >
+                  {count > 9 ? "9+" : count}
+                </span>
               )}
             </Button>
-          </div>
-        </div>
+          </Link>
 
-        {/* Mobile Search Bar */}
-        <div className="md:hidden py-3">
-          <form onSubmit={handleSearch}>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 pr-10 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
-              />
-              <button
-                type="submit"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          {/* Mobile menu */}
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild className="md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:bg-stone-100"
               >
-                <Search className="w-4 h-4" />
-              </button>
-            </div>
-          </form>
-        </div>
+                <Menu size={20} style={{ color: "var(--brand-dark)" }} />
+              </Button>
+            </SheetTrigger>
+            <SheetContent
+              side="right"
+              className="w-72 p-6"
+              style={{ backgroundColor: "var(--brand-cream)" }}
+            >
+              <div className="flex items-center gap-2 mb-8">
+                <div
+                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{ backgroundColor: "var(--brand-earth)" }}
+                >
+                  <Sparkles size={14} className="text-white" />
+                </div>
+                <span
+                  className="text-lg font-bold"
+                  style={{ color: "var(--brand-dark)" }}
+                >
+                  AuraStore
+                </span>
+              </div>
+              <nav className="flex flex-col gap-1">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className="py-3 px-4 rounded-xl text-sm font-medium transition-colors hover:bg-stone-100"
+                    style={{ color: "var(--brand-dark)" }}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <Link
+                  href="/cart"
+                  onClick={() => setOpen(false)}
+                  className="py-3 px-4 rounded-xl text-sm font-medium transition-colors hover:bg-stone-100 flex items-center gap-2"
+                  style={{ color: "var(--brand-dark)" }}
+                >
+                  <ShoppingBag size={16} />
+                  Cart{" "}
+                  {mounted && count > 0 && (
+                    <span
+                      className="ml-auto text-xs font-bold px-2 py-0.5 rounded-full text-white"
+                      style={{ backgroundColor: "var(--brand-earth)" }}
+                    >
+                      {count}
+                    </span>
+                  )}
+                </Link>
+              </nav>
 
-        {/* Mobile Menu Dropdown */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            <div className="flex flex-col space-y-3">
-              <Link
-                href="/"
-                className="text-sm text-gray-600 hover:text-gray-900 py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link
-                href="/products"
-                className="text-sm text-gray-600 hover:text-gray-900 py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Products
-              </Link>
-            </div>
-          </div>
-        )}
+              <div className="mt-auto pt-8 border-t border-stone-200 mt-8">
+                <p className="text-xs text-stone-400">
+                  Fast delivery · COD available · Bangladesh
+                </p>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
-    </nav>
+    </header>
   );
 }

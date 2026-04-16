@@ -1,147 +1,164 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { banners } from "@/lib/data/products";
 import { Button } from "@/components/ui/button";
 
-interface BannerSlide {
-  id: number;
-  title: string;
-  subtitle: string;
-  description: string;
-  ctaText: string;
-  ctaLink: string;
-  image: string;
-  bgColor: string;
-}
+export default function HeroBanner() {
+  const activeBanners = banners.filter((b) => b.active);
+  const [current, setCurrent] = useState(0);
+  const [transitioning, setTransitioning] = useState(false);
 
-const slides: BannerSlide[] = [
-  {
-    id: 1,
-    title: "Aesthetic Bottles. Real Vibes.",
-    subtitle: "Limited Edition",
-    description:
-      "Hydrate in style with bottles designed for students and gift lovers.",
-    ctaText: "Shop Now",
-    ctaLink: "/products/aurora-glass-bottle",
-    image: "💧",
-    bgColor: "from-blue-50 to-purple-50",
-  },
-  {
-    id: 2,
-    title: "Student Special Offer",
-    subtitle: "20% OFF",
-    description:
-      "Get your favorite aesthetic bottle at an exclusive student discount.",
-    ctaText: "Grab Deal",
-    ctaLink: "/shop",
-    image: "🎓",
-    bgColor: "from-purple-50 to-pink-50",
-  },
-  {
-    id: 3,
-    title: "Gift Ready Packaging",
-    subtitle: "Free Gift Wrap",
-    description: "Perfect for birthdays, anniversaries, or just because.",
-    ctaText: "Explore Gifts",
-    ctaLink: "/shop",
-    image: "🎁",
-    bgColor: "from-pink-50 to-red-50",
-  },
-];
+  const go = useCallback(
+    (index: number) => {
+      if (transitioning) return;
+      setTransitioning(true);
+      setTimeout(() => {
+        setCurrent(index);
+        setTransitioning(false);
+      }, 150);
+    },
+    [transitioning],
+  );
 
-export default function Banner() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
+  const next = useCallback(
+    () => go((current + 1) % activeBanners.length),
+    [current, activeBanners.length, go],
+  );
+  const prev = useCallback(
+    () => go((current - 1 + activeBanners.length) % activeBanners.length),
+    [current, activeBanners.length, go],
+  );
 
   useEffect(() => {
-    const timer = setInterval(nextSlide, 5000);
+    const timer = setInterval(next, 5500);
     return () => clearInterval(timer);
-  }, []);
+  }, [next]);
+
+  const banner = activeBanners[current];
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+    <section
+      className="relative overflow-hidden"
+      style={{ height: "clamp(420px, 60vh, 680px)" }}
+    >
+      {/* Background Image */}
       <div
-        className="flex transition-transform duration-500 ease-out"
-        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+        className={`absolute inset-0 transition-opacity duration-500 ${transitioning ? "opacity-0" : "opacity-100"}`}
       >
-        {slides.map((slide) => (
-          <div key={slide.id} className="w-full flex-shrink-0">
-            <div
-              className={`max-w-7xl mx-auto px-4 py-16 md:py-24 bg-gradient-to-br ${slide.bgColor}`}
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                {/* Text Content */}
-                <div>
-                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">
-                    {slide.subtitle}
-                  </p>
-                  <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 text-balance">
-                    {slide.title}
-                  </h1>
-                  <p className="text-lg text-gray-600 mb-8 text-pretty">
-                    {slide.description}
-                  </p>
-                  <a href={slide.ctaLink}>
-                    <Button
-                      size="lg"
-                      className="bg-gray-900 hover:bg-gray-800 text-white"
-                    >
-                      {slide.ctaText}
-                    </Button>
-                  </a>
-                </div>
+        <Image
+          src={banner.imageUrl}
+          alt={banner.title}
+          fill
+          className="object-cover"
+          priority
+          sizes="100vw"
+        />
+        {/* Overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(44,36,32,0.82) 0%, rgba(44,36,32,0.5) 50%, rgba(44,36,32,0.15) 100%)",
+          }}
+        />
+      </div>
 
-                {/* Image/Icon */}
-                <div className="flex justify-center items-center">
-                  <div className="text-8xl md:text-9xl animate-bounce">
-                    {slide.image}
-                  </div>
-                </div>
-              </div>
-            </div>
+      {/* Content */}
+      <div
+        className={`relative h-full max-w-6xl mx-auto px-4 flex items-center transition-all duration-500 ${transitioning ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}`}
+      >
+        <div className="max-w-xl text-white">
+          <span
+            className="inline-block text-xs font-semibold uppercase tracking-[0.2em] mb-4 px-3 py-1 rounded-full"
+            style={{ backgroundColor: "var(--brand-amber)", color: "white" }}
+          >
+            {banner.subtitle}
+          </span>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight mb-4">
+            {banner.title}
+          </h1>
+          <p
+            className="text-lg mb-8 leading-relaxed"
+            style={{ color: "rgba(255,255,255,0.75)" }}
+          >
+            {banner.description}
+          </p>
+          <div className="flex gap-3">
+            <Link href={banner.ctaLink}>
+              <Button
+                size="lg"
+                className="rounded-full px-8 h-12 text-sm font-semibold transition-transform hover:scale-105"
+                style={{
+                  backgroundColor: "var(--brand-amber)",
+                  color: "white",
+                  border: "none",
+                }}
+              >
+                {banner.ctaText}
+                <ArrowRight size={16} className="ml-2" />
+              </Button>
+            </Link>
+            <Link href="/shop">
+              <Button
+                size="lg"
+                variant="outline"
+                className="rounded-full px-8 h-12 text-sm font-semibold border-white/30 text-white hover:bg-white/10 bg-transparent"
+              >
+                View All
+              </Button>
+            </Link>
           </div>
-        ))}
+        </div>
       </div>
 
-      {/* Navigation Buttons */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft className="w-6 h-6 text-gray-900" />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow-lg transition-all"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="w-6 h-6 text-gray-900" />
-      </button>
-
-      {/* Dots Indicator */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-        {slides.map((_, index) => (
+      {/* Navigation */}
+      {activeBanners.length > 1 && (
+        <>
           <button
-            key={index}
-            onClick={() => setCurrentSlide(index)}
-            className={`w-2 h-2 rounded-full transition-all ${
-              currentSlide === index
-                ? "w-8 bg-gray-900"
-                : "bg-gray-400 hover:bg-gray-600"
-            }`}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
-    </div>
+            onClick={prev}
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            style={{
+              backgroundColor: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            <ChevronLeft size={20} className="text-white" />
+          </button>
+          <button
+            onClick={next}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110"
+            style={{
+              backgroundColor: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            <ChevronRight size={20} className="text-white" />
+          </button>
+
+          {/* Dots */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+            {activeBanners.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => go(i)}
+                className="transition-all duration-300 rounded-full"
+                style={{
+                  width: i === current ? "24px" : "8px",
+                  height: "8px",
+                  backgroundColor:
+                    i === current
+                      ? "var(--brand-amber)"
+                      : "rgba(255,255,255,0.4)",
+                }}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </section>
   );
 }

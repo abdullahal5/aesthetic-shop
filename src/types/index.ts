@@ -1,3 +1,18 @@
+export interface Review {
+  id: string;
+  name: string;
+  avatar: string;
+  rating: number;
+  comment: string;
+  date: string;
+  verified: boolean;
+}
+
+export interface ProductImage {
+  url: string;
+  alt: string;
+}
+
 export interface Product {
   id: string;
   slug: string;
@@ -6,21 +21,17 @@ export interface Product {
   description: string;
   price: number;
   originalPrice?: number;
-  images: string[];
+  images: ProductImage[];
   videoUrl?: string;
   stock: number;
+  totalSold: number;
+  category: string;
+  tags: string[];
+  features: string[];
   reviews: Review[];
   metaTitle: string;
   metaDescription: string;
-}
-
-export interface Review {
-  id: string;
-  name: string;
-  rating: number;
-  comment: string;
-  date: string;
-  avatar?: string;
+  featured: boolean;
 }
 
 export interface CartItem {
@@ -29,13 +40,40 @@ export interface CartItem {
   price: number;
   quantity: number;
   image: string;
+  slug: string;
 }
 
-export interface OrderForm {
-  name: string;
-  phone: string;
+export interface Banner {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  ctaText: string;
+  ctaLink: string;
+  imageUrl: string;
+  active: boolean;
+}
+
+export interface Order {
+  id: string;
+  orderNumber: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
   address: string;
   district: string;
+  items: CartItem[];
+  subtotal: number;
+  deliveryFee: number;
+  total: number;
+  paymentMethod: "cod";
+  status:
+    | "pending"
+    | "confirmed"
+    | "processing"
+    | "shipped"
+    | "delivered"
+    | "cancelled";
   note?: string;
-  paymentMethod: "cod" | "bkash";
+  createdAt: string;
 }

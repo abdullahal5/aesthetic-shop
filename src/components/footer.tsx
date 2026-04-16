@@ -1,112 +1,135 @@
 import Link from "next/link";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Sparkles, Phone, MapPin, MessageCircle } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-100 border-t border-gray-800">
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+    <footer style={{ backgroundColor: "var(--brand-dark)", color: "#E8DDD4" }}>
+      <div className="max-w-6xl mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
-          <div>
-            <h3 className="text-lg font-bold mb-4">AestheticBD</h3>
-            <p className="text-sm text-gray-400">
-              Aesthetic daily products for students, desk setups, and gift
-              lovers.
+          <div className="md:col-span-2 space-y-4">
+            <div className="flex items-center gap-2">
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: "var(--brand-amber)" }}
+              >
+                <Sparkles size={16} className="text-white" />
+              </div>
+              <span className="text-xl font-bold text-white">AuraStore</span>
+            </div>
+            <p
+              className="text-sm leading-relaxed max-w-xs"
+              style={{ color: "#A89888" }}
+            >
+              Aesthetic daily-use products for students, creatives, and anyone
+              who believes their space deserves to look as good as they feel.
             </p>
+            <div
+              className="flex items-center gap-2 text-sm"
+              style={{ color: "#A89888" }}
+            >
+              <MapPin size={14} style={{ color: "var(--brand-amber)" }} />
+              <span>Dhaka, Bangladesh</span>
+            </div>
+            <div
+              className="flex items-center gap-2 text-sm"
+              style={{ color: "#A89888" }}
+            >
+              <Phone size={14} style={{ color: "var(--brand-amber)" }} />
+              <a
+                href="tel:+8801700000000"
+                className="hover:text-white transition-colors"
+              >
+                +880 1700 000 000
+              </a>
+            </div>
+            <div
+              className="flex items-center gap-2 text-sm"
+              style={{ color: "#A89888" }}
+            >
+              <MessageCircle
+                size={14}
+                style={{ color: "var(--brand-amber)" }}
+              />
+              <a
+                href="https://wa.me/8801700000000"
+                className="hover:text-white transition-colors"
+              >
+                WhatsApp Us
+              </a>
+            </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-sm text-gray-400">
-              <li>
-                <Link href="/" className="hover:text-white">
-                  Home
-                </Link>
-              </li>
-              <li>
+          {/* Shop */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-white uppercase tracking-widest">
+              Shop
+            </h3>
+            <nav className="flex flex-col gap-2.5">
+              {[
+                { href: "/shop", label: "All Products" },
+                { href: "/shop", label: "Water Bottles" },
+                { href: "/shop", label: "Tumblers" },
+                { href: "/shop", label: "Gift Sets" },
+              ].map((l) => (
                 <Link
-                  href="/products/aurora-glass-bottle"
-                  className="hover:text-white"
+                  key={l.href + l.label}
+                  href={l.href}
+                  className="text-sm transition-colors hover:text-white"
+                  style={{ color: "#A89888" }}
                 >
-                  Shop
+                  {l.label}
                 </Link>
-              </li>
-              <li>
-                <Link href="#faq" className="hover:text-white">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white">
-                  Contact
-                </Link>
-              </li>
-            </ul>
+              ))}
+            </nav>
           </div>
 
-          {/* Policies */}
-          <div>
-            <h4 className="font-semibold mb-4">Policies</h4>
-            <ul className="space-y-2 text-sm text-gray-400">
-              <li>
-                <Link href="#" className="hover:text-white">
-                  Shipping Info
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white">
-                  Returns
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white">
-                  Terms
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h4 className="font-semibold mb-4">Contact</h4>
-            <ul className="space-y-3 text-sm">
-              <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4" />
-                <a
-                  href="tel:+8801234567890"
-                  className="text-gray-400 hover:text-white"
+          {/* Info */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-white uppercase tracking-widest">
+              Info
+            </h3>
+            <div className="flex flex-col gap-2.5">
+              {[
+                { label: "Delivery: Dhaka 1–2 days" },
+                { label: "Outside Dhaka: 3–5 days" },
+                { label: "Payment: COD available" },
+                { label: "Returns: 7 days policy" },
+              ].map((i) => (
+                <p
+                  key={i.label}
+                  className="text-sm"
+                  style={{ color: "#A89888" }}
                 >
-                  +880 1234 567890
-                </a>
-              </li>
-              <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4" />
-                <a
-                  href="mailto:hello@aestheticbd.com"
-                  className="text-gray-400 hover:text-white"
-                >
-                  hello@aestheticbd.com
-                </a>
-              </li>
-              <li className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 mt-0.5" />
-                <span className="text-gray-400">Dhaka, Bangladesh</span>
-              </li>
-            </ul>
+                  {i.label}
+                </p>
+              ))}
+              <div
+                className="mt-2 p-3 rounded-xl text-xs leading-relaxed"
+                style={{
+                  backgroundColor: "rgba(255,255,255,0.05)",
+                  color: "#A89888",
+                }}
+              >
+                <span className="text-white font-medium">Return Policy — </span>
+                7-day return for defective products. Call us to arrange. COD
+                available nationwide.
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="border-t border-gray-800 pt-8">
-          <p className="text-sm text-gray-400 text-center">
-            © 2024 AestheticBD. All rights reserved. Crafted with care for
-            Bangladesh.
+        <div
+          className="border-t pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs"
+          style={{ borderColor: "rgba(255,255,255,0.08)", color: "#6B5744" }}
+        >
+          <p>
+            © {new Date().getFullYear()} AuraStore Bangladesh. All rights
+            reserved.
+          </p>
+          <p className="flex items-center gap-1">
+            Made with <span style={{ color: "var(--brand-amber)" }}>♥</span> in
+            Bangladesh
           </p>
         </div>
       </div>

@@ -1,313 +1,322 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
+import {
+  ArrowRight,
+  Truck,
+  ShieldCheck,
+  Phone,
+  Star,
+  RotateCcw,
+} from "lucide-react";
+import { getFeaturedProducts, products } from "@/lib/data/products";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Star, Truck, Shield, RotateCcw } from "lucide-react";
-import Banner from "@/components/home/Banner";
+import HeroBanner from "@/components/home/Banner";
 import ProductCard from "@/components/home/ProductCard";
 
 export const metadata: Metadata = {
-  title: "Shop Aesthetic Water Bottles Bangladesh",
+  title: "AuraStore — Aesthetic Water Bottles Bangladesh",
   description:
-    "Aesthetic water bottles & daily products for students and gift lovers. Fast delivery in Dhaka and across Bangladesh. Free shipping on orders above 1500 BDT.",
-  openGraph: {
-    title: "AestheticBD — Aesthetic Water Bottles Bangladesh",
-    description:
-      "Shop aesthetic water bottles for students, desk setups & gifts. Fast delivery.",
-    url: "https://aestheticbd.com",
-    type: "website",
-  },
+    "Aesthetic water bottles and daily products for students, desk setups, and gifts. Fast delivery across Bangladesh. COD available.",
 };
 
-// Sample products data
-const products = [
+const trustPoints = [
   {
-    id: "1",
-    name: "Aurora Glass Bottle",
-    price: 650,
-    originalPrice: 850,
-    image: "🌙",
-    rating: 5,
-    reviewCount: 47,
-    slug: "aurora-glass-bottle",
+    icon: Truck,
+    title: "Fast Delivery",
+    desc: "Dhaka: 1–2 days\nOutside Dhaka: 3–5 days",
   },
   {
-    id: "2",
-    name: "Minimalist Steel Bottle",
-    price: 550,
-    originalPrice: 750,
-    image: "⚡",
-    rating: 4.5,
-    reviewCount: 32,
-    slug: "minimalist-steel-bottle",
+    icon: Phone,
+    title: "Call Confirmation",
+    desc: "We call before\nevery dispatch",
   },
   {
-    id: "3",
-    name: "Pastel Water Bottle",
-    price: 450,
-    originalPrice: 650,
-    image: "🌸",
-    rating: 4.8,
-    reviewCount: 28,
-    slug: "pastel-water-bottle",
+    icon: ShieldCheck,
+    title: "COD Available",
+    desc: "Pay when the\norder arrives",
   },
   {
-    id: "4",
-    name: "Eco-Friendly Bamboo Bottle",
-    price: 750,
-    originalPrice: 950,
-    image: "🎋",
-    rating: 5,
-    reviewCount: 19,
-    slug: "eco-friendly-bamboo-bottle",
+    icon: RotateCcw,
+    title: "Easy Returns",
+    desc: "7-day return for\ndefective products",
   },
 ];
 
-export default function Home() {
+const reviews = [
+  {
+    name: "Tanvir Ahmed",
+    city: "Dhaka",
+    rating: 5,
+    text: "The Aurora bottle made my entire desk look more intentional. I get compliments every day in class.",
+  },
+  {
+    name: "Sadia Islam",
+    city: "Chattogram",
+    rating: 5,
+    text: "Ordered the gift set for my sister's birthday. She absolutely loved it. Packaging was perfect.",
+  },
+  {
+    name: "Nusrat Jahan",
+    city: "Sylhet",
+    rating: 5,
+    text: "Fast delivery, great quality. The mist ceramic bottle is even prettier in person. 10/10.",
+  },
+];
+
+export default function HomePage() {
+  const featured = getFeaturedProducts();
+
   return (
-    <div className="min-h-screen bg-white">
-      {/* Banner Section */}
-      <Banner />
-
-      {/* Featured Products Section */}
-      <section className="max-w-7xl mx-auto px-4 py-16 md:py-24">
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-            Featured Products
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Discover our most loved aesthetic bottles that customers can't stop
-            talking about
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} {...product} />
-          ))}
-        </div>
-
-        <div className="text-center mt-12">
-          <Link href="/products">
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white"
-            >
-              View All Products
-            </Button>
-          </Link>
-        </div>
-      </section>
-
-      {/* Trust Section */}
-      <section className="bg-gray-50 py-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <Card className="p-6 border-gray-200">
-              <Truck className="w-8 h-8 text-gray-900 mb-3" />
-              <h3 className="font-semibold text-gray-900 mb-2">
-                Fast Delivery
-              </h3>
-              <p className="text-sm text-gray-600">
-                Order confirmed within 24 hours. Delivered in 3-5 days across
-                Dhaka.
-              </p>
-            </Card>
-            <Card className="p-6 border-gray-200">
-              <Shield className="w-8 h-8 text-gray-900 mb-3" />
-              <h3 className="font-semibold text-gray-900 mb-2">
-                100% Authentic
-              </h3>
-              <p className="text-sm text-gray-600">
-                Real photos, real customers, real reviews. No fake inventory.
-              </p>
-            </Card>
-            <Card className="p-6 border-gray-200">
-              <RotateCcw className="w-8 h-8 text-gray-900 mb-3" />
-              <h3 className="font-semibold text-gray-900 mb-2">Easy Returns</h3>
-              <p className="text-sm text-gray-600">
-                Not happy? Return within 7 days. No questions asked.
-              </p>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Hero Product Section */}
-      <section className="max-w-7xl mx-auto px-4 py-16 md:py-24">
-        <div className="mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-            Our Hero Product
-          </h2>
-          <p className="text-gray-600">The bottle that started it all</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Product Image Placeholder */}
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg aspect-square flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-8xl mb-4">🌙</div>
-              <p className="text-gray-600 font-medium">Aurora Glass Bottle</p>
+    <>
+      {/* <StoreLayout> */}
+        <HeroBanner />
+        {/* Trust Strip */}
+        <section
+          className="border-b border-stone-100"
+          style={{ backgroundColor: "var(--brand-sand)" }}
+        >
+          <div className="max-w-6xl mx-auto px-4 py-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {trustPoints.map(({ icon: Icon, title, desc }) => (
+                <div key={title} className="flex items-start gap-3">
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
+                    style={{ backgroundColor: "var(--brand-cream)" }}
+                  >
+                    <Icon size={15} style={{ color: "var(--brand-earth)" }} />
+                  </div>
+                  <div>
+                    <p
+                      className="text-xs font-semibold"
+                      style={{ color: "var(--brand-dark)" }}
+                    >
+                      {title}
+                    </p>
+                    <p
+                      className="text-xs whitespace-pre-line leading-relaxed"
+                      style={{ color: "#8B7B70" }}
+                    >
+                      {desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-
-          {/* Product Info */}
-          <div>
-            <h3 className="text-3xl font-bold text-gray-900 mb-2">
-              Aurora Glass Bottle
-            </h3>
-            <p className="text-xl text-gray-600 mb-6">
-              The bottle that actually fits your desk aesthetic.
-            </p>
-
-            <div className="space-y-4 mb-8">
-              <p className="text-gray-700">
-                Designed for students and creatives who care how their space
-                looks. The Aurora bottle combines soft frosted glass with a
-                minimalist silicone sleeve — hydration that matches your vibe,
-                not fights it.
-              </p>
-
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-gray-900">৳650</span>
-                <span className="text-lg text-gray-500 line-through">৳850</span>
-              </div>
-            </div>
-
-            {/* Rating */}
-            <div className="flex items-center gap-2 mb-8">
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-4 h-4 fill-yellow-400 text-yellow-400"
-                  />
-                ))}
-              </div>
-              <span className="text-sm text-gray-600">5.0 (47 reviews)</span>
-            </div>
-
-            {/* CTA */}
-            <Link href="/products/aurora-glass-bottle" className="block">
-              <Button
-                size="lg"
-                className="w-full bg-gray-900 hover:bg-gray-800 text-white mb-3"
+        </section>
+        {/* Featured Products */}
+        <section className="max-w-6xl mx-auto px-4 py-16">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <p
+                className="text-xs font-semibold uppercase tracking-widest mb-2"
+                style={{ color: "var(--brand-sage)" }}
               >
-                View Details & Buy
+                Our Collection
+              </p>
+              <h2
+                className="text-3xl md:text-4xl font-bold tracking-tight"
+                style={{ color: "var(--brand-dark)" }}
+              >
+                Featured Products
+              </h2>
+            </div>
+            <Link href="/shop">
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-full hidden md:flex items-center gap-1.5 border-stone-200 hover:bg-stone-50"
+              >
+                View All <ArrowRight size={14} />
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="w-full">
-              Call to Order
-            </Button>
           </div>
-        </div>
-      </section>
 
-      {/* Reviews Preview */}
-      <section className="bg-gray-50 py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-              What Customers Say
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {featured.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+
+          <div className="text-center mt-10 md:hidden">
+            <Link href="/shop">
+              <Button
+                variant="outline"
+                className="rounded-full px-8 border-stone-200"
+              >
+                View All Products <ArrowRight size={15} className="ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </section>
+        {/* Brand Story */}
+        <section
+          className="py-16"
+          style={{ backgroundColor: "var(--brand-sand)" }}
+        >
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div className="space-y-5">
+                <p
+                  className="text-xs font-semibold uppercase tracking-widest"
+                  style={{ color: "var(--brand-sage)" }}
+                >
+                  Our Story
+                </p>
+                <h2
+                  className="text-3xl md:text-4xl font-bold leading-tight"
+                  style={{ color: "var(--brand-dark)" }}
+                >
+                  Designed for people who care how their space looks
+                </h2>
+                <p
+                  className="text-base leading-relaxed"
+                  style={{ color: "#6B5744" }}
+                >
+                  We started AuraStore because we couldn't find products in
+                  Bangladesh that were both useful and genuinely beautiful.
+                  Everything was either cheap and ugly, or imported and
+                  overpriced.
+                </p>
+                <p
+                  className="text-base leading-relaxed"
+                  style={{ color: "#6B5744" }}
+                >
+                  We wanted something different — aesthetic, affordable, and
+                  made for students and young people here. Every product we
+                  carry is chosen for its design, quality, and ability to make
+                  your daily space feel more intentional.
+                </p>
+                <Link href="/shop">
+                  <Button
+                    className="rounded-full px-8 mt-2 transition-transform hover:scale-105"
+                    style={{
+                      backgroundColor: "var(--brand-earth)",
+                      color: "white",
+                      border: "none",
+                    }}
+                  >
+                    Shop the Collection{" "}
+                    <ArrowRight size={15} className="ml-2" />
+                  </Button>
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { value: "500+", label: "Happy Customers" },
+                  { value: "5.0", label: "Average Rating" },
+                  { value: "48hr", label: "Avg Delivery Time" },
+                  { value: "0%", label: "Fake Products" },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="bg-white rounded-2xl p-6 text-center border border-stone-100"
+                  >
+                    <p
+                      className="text-3xl font-bold mb-1"
+                      style={{ color: "var(--brand-earth)" }}
+                    >
+                      {stat.value}
+                    </p>
+                    <p className="text-xs text-stone-500">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+        {/* Reviews */}
+        <section className="max-w-6xl mx-auto px-4 py-16">
+          <div className="text-center mb-10">
+            <p
+              className="text-xs font-semibold uppercase tracking-widest mb-2"
+              style={{ color: "var(--brand-sage)" }}
+            >
+              Real Customers
+            </p>
+            <h2
+              className="text-3xl font-bold"
+              style={{ color: "var(--brand-dark)" }}
+            >
+              What People Say
             </h2>
-            <p className="text-gray-600">Real feedback from real people</p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[
-              {
-                name: "Tanvir Ahmed",
-                review:
-                  "Absolutely love this bottle. My whole desk setup looks better now.",
-                rating: 5,
-              },
-              {
-                name: "Sadia Islam",
-                review:
-                  "Got it as a gift and honestly it's the prettiest thing on my table.",
-                rating: 5,
-              },
-            ].map((review, i) => (
-              <Card key={i} className="p-6 border-gray-200">
-                <div className="flex gap-1 mb-3">
-                  {[...Array(review.rating)].map((_, j) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {reviews.map((r) => (
+              <div
+                key={r.name}
+                className="bg-white rounded-2xl p-6 border border-stone-100 space-y-3"
+              >
+                <div className="flex gap-0.5">
+                  {[1, 2, 3, 4, 5].map((s) => (
                     <Star
-                      key={j}
-                      className="w-4 h-4 fill-yellow-400 text-yellow-400"
+                      key={s}
+                      size={14}
+                      className="fill-amber-400 text-amber-400"
                     />
                   ))}
                 </div>
-                <p className="text-gray-700 mb-4">{review.review}</p>
-                <p className="font-semibold text-gray-900">— {review.name}</p>
-              </Card>
+                <p
+                  className="text-sm leading-relaxed"
+                  style={{ color: "#6B5744" }}
+                >
+                  &ldquo;{r.text}&rdquo;
+                </p>
+                <div className="flex items-center gap-2 pt-1">
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                    style={{ backgroundColor: "var(--brand-earth)" }}
+                  >
+                    {r.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p
+                      className="text-xs font-semibold"
+                      style={{ color: "var(--brand-dark)" }}
+                    >
+                      {r.name}
+                    </p>
+                    <p className="text-xs text-stone-400">{r.city}</p>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="max-w-7xl mx-auto px-4 py-16 md:py-24">
-        <div className="mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-            Frequently Asked
-          </h2>
-          <p className="text-gray-600">Everything you need to know</p>
-        </div>
-
-        <div className="space-y-4 max-w-3xl mx-auto">
-          {[
-            {
-              q: "How long does delivery take?",
-              a: "Orders are confirmed within 24 hours and delivered within 3-5 business days in Dhaka. We call you before delivery to confirm.",
-            },
-            {
-              q: "What if I want to return?",
-              a: "You have 7 days to return any product if you're not satisfied. We'll arrange pickup from your location.",
-            },
-            {
-              q: "Is it cash on delivery?",
-              a: "Yes! We support COD for all orders. Pay when the bottle arrives at your doorstep.",
-            },
-            {
-              q: "Where do you deliver?",
-              a: "Currently delivering in Dhaka city. Expansion to other cities coming soon.",
-            },
-          ].map((item, i) => (
-            <details
-              key={i}
-              className="group border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50"
+        </section>
+        {/* CTA Banner */}
+        <section
+          className="py-16"
+          style={{ backgroundColor: "var(--brand-dark)" }}
+        >
+          <div className="max-w-3xl mx-auto px-4 text-center">
+            <p
+              className="text-xs font-semibold uppercase tracking-widest mb-3"
+              style={{ color: "var(--brand-amber)" }}
             >
-              <summary className="font-semibold text-gray-900 flex items-center justify-between">
-                {item.q}
-                <span className="text-gray-600 group-open:rotate-180">▼</span>
-              </summary>
-              <p className="text-gray-600 mt-3">{item.a}</p>
-            </details>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="bg-gray-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Get Yours?
-          </h2>
-          <p className="text-gray-300 mb-8 text-lg max-w-2xl mx-auto">
-            Limited stock available. Order now and get your Aurora Glass Bottle
-            delivered within 5 days.
-          </p>
-          <Link href="/products/aurora-glass-bottle">
-            <Button
-              size="lg"
-              className="bg-white text-gray-900 hover:bg-gray-100"
-            >
-              Shop Now
-            </Button>
-          </Link>
-        </div>
-      </section>
-    </div>
+              Limited Stock
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Ready to upgrade your space?
+            </h2>
+            <p className="text-base mb-8" style={{ color: "#A89888" }}>
+              Fast delivery across Bangladesh. Pay on delivery. No commitment.
+            </p>
+            <Link href="/shop">
+              <Button
+                size="lg"
+                className="rounded-full px-10 h-12 text-sm font-semibold transition-transform hover:scale-105"
+                style={{
+                  backgroundColor: "var(--brand-amber)",
+                  color: "white",
+                  border: "none",
+                }}
+              >
+                Shop Now <ArrowRight size={16} className="ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </section>
+      {/* </StoreLayout> */}
+    </>
   );
 }
