@@ -64,21 +64,27 @@ export default function ProductDetailClient({ product, related }: Props) {
       style={{ backgroundColor: "var(--brand-cream)" }}
     >
       {/* Breadcrumb */}
-      <div className="max-w-6xl mx-auto px-4 py-4">
+      <div className="max-w-6xl mx-auto px-4 py-3 md:py-4">
         <nav
-          className="flex items-center gap-1.5 text-xs"
+          className="flex items-center gap-1.5 text-xs overflow-x-auto"
           style={{ color: "#8B7B70" }}
         >
-          <Link href="/" className="hover:text-stone-900 transition-colors">
+          <Link
+            href="/"
+            className="hover:text-stone-900 transition-colors whitespace-nowrap"
+          >
             Home
           </Link>
-          <ChevronRight size={12} />
-          <Link href="/shop" className="hover:text-stone-900 transition-colors">
+          <ChevronRight size={12} className="shrink-0" />
+          <Link
+            href="/shop"
+            className="hover:text-stone-900 transition-colors whitespace-nowrap"
+          >
             Shop
           </Link>
-          <ChevronRight size={12} />
+          <ChevronRight size={12} className="shrink-0" />
           <span
-            className="font-medium truncate max-w-[200px]"
+            className="font-medium truncate"
             style={{ color: "var(--brand-dark)" }}
           >
             {product.name}
@@ -87,56 +93,59 @@ export default function ProductDetailClient({ product, related }: Props) {
       </div>
 
       {/* Main */}
-      <div className="max-w-6xl mx-auto px-4 pb-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Images */}
-          <div className="space-y-3 sticky top-24 self-start">
-            <div
-              className="relative aspect-square rounded-3xl overflow-hidden"
-              style={{ backgroundColor: "var(--brand-sand)" }}
-            >
-              <Image
-                src={product.images[selectedImage].url}
-                alt={product.images[selectedImage].alt}
-                fill
-                className="object-cover transition-all duration-300"
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-              {discount && (
-                <div
-                  className="absolute top-4 left-4 px-3 py-1 rounded-full text-white text-sm font-bold"
-                  style={{ backgroundColor: "var(--brand-earth)" }}
-                >
-                  -{discount}% OFF
+      <div className="max-w-6xl mx-auto px-4 pb-12 md:pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12 lg:gap-12">
+          {/* Images - Sticky on Mobile, Sticky on Desktop */}
+          <div className="space-y-3 lg:sticky lg:top-24 lg:self-start">
+            {/* Sticky wrapper for mobile */}
+            <div className="sticky top-0 z-20 lg:static lg:z-auto space-y-3">
+              <div
+                className="relative aspect-square rounded-2xl md:rounded-3xl overflow-hidden"
+                style={{ backgroundColor: "var(--brand-sand)" }}
+              >
+                <Image
+                  src={product.images[selectedImage].url}
+                  alt={product.images[selectedImage].alt}
+                  fill
+                  className="object-cover transition-all duration-300"
+                  priority
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 50vw"
+                />
+                {discount && (
+                  <div
+                    className="absolute top-3 left-3 md:top-4 md:left-4 px-2 md:px-3 py-1 rounded-full text-white text-xs md:text-sm font-bold"
+                    style={{ backgroundColor: "var(--brand-earth)" }}
+                  >
+                    -{discount}% OFF
+                  </div>
+                )}
+              </div>
+              {product.images.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                  {product.images.map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedImage(i)}
+                      className={`relative w-16 h-16 md:w-20 md:h-20 rounded-xl md:rounded-2xl overflow-hidden border-2 transition-all duration-200 shrink-0 ${selectedImage === i ? "border-amber-500 shadow-md" : "border-transparent hover:border-stone-300"}`}
+                    >
+                      <Image
+                        src={img.url}
+                        alt={img.alt}
+                        fill
+                        className="object-cover"
+                        sizes="80px"
+                      />
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
-            {product.images.length > 1 && (
-              <div className="flex gap-2">
-                {product.images.map((img, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedImage(i)}
-                    className={`relative w-20 h-20 rounded-2xl overflow-hidden border-2 transition-all duration-200 flex-shrink-0 ${selectedImage === i ? "border-amber-500 shadow-md" : "border-transparent hover:border-stone-300"}`}
-                  >
-                    <Image
-                      src={img.url}
-                      alt={img.alt}
-                      fill
-                      className="object-cover"
-                      sizes="80px"
-                    />
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
 
           {/* Info */}
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             {/* Header */}
-            <div className="space-y-2">
+            <div className="space-y-2 md:space-y-3">
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge
                   className="text-xs rounded-full"
@@ -163,17 +172,17 @@ export default function ProductDetailClient({ product, related }: Props) {
                 )}
               </div>
               <h1
-                className="text-3xl font-bold leading-tight"
+                className="text-2xl md:text-3xl font-bold leading-tight"
                 style={{ color: "var(--brand-dark)" }}
               >
                 {product.name}
               </h1>
-              <p className="text-base" style={{ color: "#8B7B70" }}>
+              <p className="text-sm md:text-base" style={{ color: "#8B7B70" }}>
                 {product.tagline}
               </p>
 
               {/* Rating row */}
-              <div className="flex items-center gap-3 pt-1">
+              <div className="flex items-center gap-2 md:gap-3 pt-1 flex-wrap">
                 <div className="flex gap-0.5">
                   {[1, 2, 3, 4, 5].map((s) => (
                     <Star
@@ -188,35 +197,35 @@ export default function ProductDetailClient({ product, related }: Props) {
                   ))}
                 </div>
                 <span
-                  className="text-sm font-medium"
+                  className="text-xs md:text-sm font-medium"
                   style={{ color: "var(--brand-dark)" }}
                 >
                   {avgRating.toFixed(1)}
                 </span>
-                <span className="text-sm text-stone-400">
-                  ({product.reviews.length} reviews)
+                <span className="text-xs md:text-sm text-stone-400">
+                  ({product.reviews.length})
                 </span>
-                <span className="text-sm text-stone-400">·</span>
-                <span className="text-sm text-stone-400">
+                <span className="text-xs md:text-sm text-stone-400">·</span>
+                <span className="text-xs md:text-sm text-stone-400">
                   {product.totalSold} sold
                 </span>
               </div>
             </div>
 
             {/* Price */}
-            <div className="flex items-baseline gap-3">
+            <div className="flex items-baseline gap-2 md:gap-3 flex-wrap">
               <span
-                className="text-4xl font-bold"
+                className="text-3xl md:text-4xl font-bold"
                 style={{ color: "var(--brand-dark)" }}
               >
                 ৳{product.price.toLocaleString()}
               </span>
               {product.originalPrice && (
                 <>
-                  <span className="text-xl text-stone-400 line-through">
+                  <span className="text-lg md:text-xl text-stone-400 line-through">
                     ৳{product.originalPrice.toLocaleString()}
                   </span>
-                  <span className="text-sm font-semibold text-green-600">
+                  <span className="text-xs md:text-sm font-semibold text-green-600">
                     Save ৳
                     {(product.originalPrice - product.price).toLocaleString()}
                   </span>
@@ -226,7 +235,7 @@ export default function ProductDetailClient({ product, related }: Props) {
 
             {/* Description */}
             <div
-              className="text-sm leading-relaxed space-y-3"
+              className="text-xs md:text-sm leading-relaxed space-y-2 md:space-y-3"
               style={{ color: "#6B5744" }}
             >
               {product.description
@@ -237,7 +246,7 @@ export default function ProductDetailClient({ product, related }: Props) {
             {/* Features */}
             <div>
               <h3
-                className="text-sm font-semibold mb-3"
+                className="text-xs md:text-sm font-semibold mb-2 md:mb-3"
                 style={{ color: "var(--brand-dark)" }}
               >
                 What&apos;s Included
@@ -246,7 +255,7 @@ export default function ProductDetailClient({ product, related }: Props) {
                 {product.features.map((f) => (
                   <div
                     key={f}
-                    className="flex items-center gap-2 text-sm"
+                    className="flex items-center gap-2 text-xs md:text-sm"
                     style={{ color: "#6B5744" }}
                   >
                     <Check
@@ -263,22 +272,22 @@ export default function ProductDetailClient({ product, related }: Props) {
             {/* Quantity */}
             <div className="space-y-2">
               <label
-                className="text-sm font-medium"
+                className="text-xs md:text-sm font-medium"
                 style={{ color: "var(--brand-dark)" }}
               >
                 Quantity
               </label>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 md:gap-3">
                 <div className="flex items-center border border-stone-200 rounded-full overflow-hidden">
                   <button
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="w-10 h-10 flex items-center justify-center hover:bg-stone-50 transition-colors disabled:opacity-40"
+                    className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center hover:bg-stone-50 transition-colors disabled:opacity-40"
                     disabled={quantity <= 1}
                   >
                     <Minus size={14} />
                   </button>
                   <span
-                    className="w-10 text-center font-semibold text-sm"
+                    className="w-8 md:w-10 text-center font-semibold text-xs md:text-sm"
                     style={{ color: "var(--brand-dark)" }}
                   >
                     {quantity}
@@ -287,7 +296,7 @@ export default function ProductDetailClient({ product, related }: Props) {
                     onClick={() =>
                       setQuantity((q) => Math.min(product.stock, q + 1))
                     }
-                    className="w-10 h-10 flex items-center justify-center hover:bg-stone-50 transition-colors disabled:opacity-40"
+                    className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center hover:bg-stone-50 transition-colors disabled:opacity-40"
                     disabled={quantity >= product.stock}
                   >
                     <Plus size={14} />
@@ -300,11 +309,11 @@ export default function ProductDetailClient({ product, related }: Props) {
             </div>
 
             {/* CTA Buttons */}
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3 sticky bottom-0 z-30 bg-linear-to-t from-white via-white to-transparent pt-4 md:static md:pt-0">
               <Button
                 onClick={handleAdd}
                 disabled={added || product.stock === 0}
-                className="w-full h-13 rounded-full text-sm font-semibold transition-all duration-200 hover:scale-[1.02]"
+                className="w-full h-11 md:h-13 rounded-full text-xs md:text-sm font-semibold transition-all duration-200 hover:scale-[1.02]"
                 style={{
                   backgroundColor: added
                     ? "var(--brand-sage)"
@@ -321,14 +330,15 @@ export default function ProductDetailClient({ product, related }: Props) {
                 ) : (
                   <>
                     <ShoppingBag size={16} className="mr-2" />
-                    Add to Cart — ৳{(product.price * quantity).toLocaleString()}
+                    <span className="hidden sm:inline">Add to Cart — </span>৳
+                    {(product.price * quantity).toLocaleString()}
                   </>
                 )}
               </Button>
               <Link href="/checkout">
                 <Button
                   variant="outline"
-                  className="w-full h-13 rounded-full text-sm font-semibold border-stone-300 hover:bg-stone-50"
+                  className="w-full h-11 md:h-13 rounded-full text-xs md:text-sm font-semibold border-stone-300 hover:bg-stone-50"
                   onClick={() =>
                     addItem({
                       productId: product.id,
@@ -347,7 +357,7 @@ export default function ProductDetailClient({ product, related }: Props) {
             </div>
 
             {/* Trust signals */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2 md:gap-3 mt-4 md:mt-0">
               {[
                 { icon: Truck, title: "Fast Delivery", sub: "Dhaka 1–2 days" },
                 {
@@ -363,7 +373,7 @@ export default function ProductDetailClient({ product, related }: Props) {
               ].map((item) => (
                 <div
                   key={item.title}
-                  className="flex flex-col items-center gap-1.5 p-3 rounded-2xl text-center"
+                  className="flex flex-col items-center gap-1 md:gap-1.5 p-2 md:p-3 rounded-xl md:rounded-2xl text-center"
                   style={{ backgroundColor: "var(--brand-sand)" }}
                 >
                   <item.icon
@@ -371,12 +381,14 @@ export default function ProductDetailClient({ product, related }: Props) {
                     style={{ color: "var(--brand-earth)" }}
                   />
                   <p
-                    className="text-xs font-semibold"
+                    className="text-xs font-semibold leading-tight"
                     style={{ color: "var(--brand-dark)" }}
                   >
                     {item.title}
                   </p>
-                  <p className="text-xs text-stone-400">{item.sub}</p>
+                  <p className="text-xs text-stone-400 leading-tight">
+                    {item.sub}
+                  </p>
                 </div>
               ))}
             </div>
@@ -387,7 +399,7 @@ export default function ProductDetailClient({ product, related }: Props) {
                 {product.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-2.5 py-1 rounded-full text-xs border border-stone-200 text-stone-500"
+                    className="px-2 md:px-2.5 py-1 rounded-full text-xs border border-stone-200 text-stone-500"
                   >
                     #{tag}
                   </span>
@@ -399,10 +411,10 @@ export default function ProductDetailClient({ product, related }: Props) {
 
         {/* Reviews */}
         {product.reviews.length > 0 && (
-          <section className="mt-16">
-            <div className="flex items-end gap-4 mb-8">
+          <section className="mt-12 md:mt-16">
+            <div className="flex items-end gap-3 md:gap-4 mb-6 md:mb-8 flex-wrap">
               <h2
-                className="text-2xl font-bold"
+                className="text-xl md:text-2xl font-bold"
                 style={{ color: "var(--brand-dark)" }}
               >
                 Customer Reviews
@@ -422,34 +434,34 @@ export default function ProductDetailClient({ product, related }: Props) {
                   ))}
                 </div>
                 <span
-                  className="text-sm font-semibold"
+                  className="text-xs md:text-sm font-semibold"
                   style={{ color: "var(--brand-dark)" }}
                 >
                   {avgRating.toFixed(1)}
                 </span>
-                <span className="text-sm text-stone-400">
+                <span className="text-xs md:text-sm text-stone-400">
                   · {product.reviews.length} reviews
                 </span>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
               {product.reviews.map((review) => (
                 <article
                   key={review.id}
-                  className="p-5 rounded-2xl bg-white border border-stone-100"
+                  className="p-4 md:p-5 rounded-2xl bg-white border border-stone-100"
                 >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
+                  <div className="flex items-start justify-between mb-3 gap-2">
+                    <div className="flex items-center gap-2 md:gap-3 flex-1">
                       <div
-                        className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold shrink-0"
+                        className="w-8 h-8 md:w-9 md:h-9 rounded-full flex items-center justify-center text-white text-xs md:text-sm font-semibold shrink-0"
                         style={{ backgroundColor: "var(--brand-earth)" }}
                       >
                         {review.avatar}
                       </div>
-                      <div>
-                        <div className="flex items-center gap-1.5">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1 flex-wrap">
                           <p
-                            className="text-sm font-semibold"
+                            className="text-xs md:text-sm font-semibold"
                             style={{ color: "var(--brand-dark)" }}
                           >
                             {review.name}
@@ -470,7 +482,7 @@ export default function ProductDetailClient({ product, related }: Props) {
                         </p>
                       </div>
                     </div>
-                    <div className="flex gap-0.5">
+                    <div className="flex gap-0.5 shrink-0">
                       {[1, 2, 3, 4, 5].map((s) => (
                         <Star
                           key={s}
@@ -485,7 +497,7 @@ export default function ProductDetailClient({ product, related }: Props) {
                     </div>
                   </div>
                   <p
-                    className="text-sm leading-relaxed"
+                    className="text-xs md:text-sm leading-relaxed"
                     style={{ color: "#6B5744" }}
                   >
                     {review.comment}
@@ -498,14 +510,14 @@ export default function ProductDetailClient({ product, related }: Props) {
 
         {/* Related */}
         {related.length > 0 && (
-          <section className="mt-16">
+          <section className="mt-12 md:mt-16">
             <h2
-              className="text-2xl font-bold mb-8"
+              className="text-xl md:text-2xl font-bold mb-6 md:mb-8"
               style={{ color: "var(--brand-dark)" }}
             >
               You might also like
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
               {related.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}

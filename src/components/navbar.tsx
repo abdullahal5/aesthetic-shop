@@ -4,8 +4,15 @@ import Link from "next/link";
 import { ShoppingBag, Menu, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import { useCart } from "@/hooks/cartContext";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -102,9 +109,21 @@ export default function Navbar() {
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="w-[280px] sm:w-72 p-6"
+              className="w-70 sm:w-72 p-6"
               style={{ backgroundColor: "var(--brand-cream)" }}
             >
+              {/* Hidden title for accessibility */}
+              <VisuallyHidden asChild>
+                <SheetTitle>Navigation Menu</SheetTitle>
+              </VisuallyHidden>
+
+              {/* Hidden description for accessibility */}
+              <VisuallyHidden asChild>
+                <SheetDescription>
+                  Mobile navigation menu with links to home, shop, and cart
+                </SheetDescription>
+              </VisuallyHidden>
+
               <div className="flex items-center gap-2 mb-8">
                 <div
                   className="w-7 h-7 rounded-lg flex items-center justify-center"

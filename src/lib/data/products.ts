@@ -113,10 +113,6 @@ Perfect for your study desk, gym bag, or as a meaningful gift for someone specia
         alt: "Mist bottle on wooden surface",
       },
       {
-        url: "https://images.unsplash.com/photo-1578897364546-68f77f6ccc22?w=900&q=85",
-        alt: "Mist bottle lifestyle flat lay",
-      },
-      {
         url: "https://images.unsplash.com/photo-1596952954288-16862d37405b?w=900&q=85",
         alt: "Mist bottle close up matte finish",
       },
@@ -193,10 +189,6 @@ Light, beautiful, and completely dishwasher-safe.`,
         alt: "Cloud tumbler iced coffee",
       },
       {
-        url: "https://images.unsplash.com/photo-1571168474076-25fcb3e1cc6a?w=900&q=85",
-        alt: "Cloud tumbler on desk",
-      },
-      {
         url: "https://images.unsplash.com/photo-1589984662646-e7b2e4962f18?w=900&q=85",
         alt: "Cloud tumbler flat lay",
       },
@@ -261,10 +253,6 @@ This is the bottle you carry everywhere without thinking twice.`,
       {
         url: "https://images.unsplash.com/photo-1589984662646-e7b2e4962f18?w=900&q=85",
         alt: "Pebble bottle outdoor",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1578897364546-68f77f6ccc22?w=900&q=85",
-        alt: "Pebble bottle grip shot",
       },
       {
         url: "https://images.unsplash.com/photo-1532635241-17e820acc59f?w=900&q=85",
@@ -332,14 +320,6 @@ Because some people deserve something beautiful.`,
         url: "https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=900&q=85",
         alt: "Sakura set gift box",
       },
-      {
-        url: "https://images.unsplash.com/photo-1627728527968-2f4ade4b8c56?w=900&q=85",
-        alt: "Sakura bottles together",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1585637071402-86264d1f999c?w=900&q=85",
-        alt: "Sakura set lifestyle",
-      },
     ],
     stock: 4,
     totalSold: 98,
@@ -397,10 +377,6 @@ For those who want their hydration to be as natural as their lifestyle.`,
       {
         url: "https://images.unsplash.com/photo-1532635241-17e820acc59f?w=900&q=85",
         alt: "Bamboo cap glass bottle natural",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1571168474076-25fcb3e1cc6a?w=900&q=85",
-        alt: "Bamboo bottle on wooden desk",
       },
       {
         url: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=900&q=85",
