@@ -48,7 +48,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     >
       {/* Image */}
       <div
-        className="relative aspect-[4/5] overflow-hidden"
+        className="relative aspect-4/5 overflow-hidden"
         style={{ backgroundColor: "var(--brand-sand)" }}
       >
         <Image

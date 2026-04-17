@@ -21,7 +21,6 @@ export default function CartPage() {
     useCart();
   const deliveryFee = total > 0 ? 70 : 0;
   const grandTotal = total + deliveryFee;
-
   if (!mounted) {
     return (
       <>
@@ -97,7 +96,7 @@ export default function CartPage() {
                 className="flex gap-4 p-4 bg-white rounded-2xl border border-stone-100 shadow-sm"
               >
                 <Link
-                  href={`/shop/${item.slug}`}
+                  href={`/products/${item.slug}`}
                   className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0"
                   style={{ backgroundColor: "var(--brand-sand)" }}
                 >
@@ -110,7 +109,7 @@ export default function CartPage() {
                   />
                 </Link>
                 <div className="flex-1 min-w-0">
-                  <Link href={`/shop/${item.slug}`}>
+                  <Link href={`/products/${item.slug}`}>
                     <p
                       className="font-semibold text-sm leading-snug hover:underline"
                       style={{ color: "var(--brand-dark)" }}
@@ -244,7 +243,7 @@ export default function CartPage() {
                 </Button>
               </Link>
 
-              <div className="flex items-start gap-2 text-xs text-stone-400 pt-1">
+              <div className="flex items-start gap-2 text-xs text-stone-400 pt-2.5">
                 <ShieldCheck
                   size={13}
                   className="shrink-0 mt-0.5"

@@ -8,7 +8,7 @@ import {
   Star,
   RotateCcw,
 } from "lucide-react";
-import { getFeaturedProducts, products } from "@/lib/data/products";
+import { getFeaturedProducts } from "@/lib/data/products";
 import { Button } from "@/components/ui/button";
 import HeroBanner from "@/components/home/Banner";
 import ProductCard from "@/components/home/ProductCard";
@@ -68,7 +68,6 @@ export default function HomePage() {
 
   return (
     <>
-      {/* <StoreLayout> */}
         <HeroBanner />
         {/* Trust Strip */}
         <section
@@ -173,7 +172,7 @@ export default function HomePage() {
                   className="text-base leading-relaxed"
                   style={{ color: "#6B5744" }}
                 >
-                  We started AuraStore because we couldn't find products in
+                  We started AuraStore because we couldn&apos;t find products in
                   Bangladesh that were both useful and genuinely beautiful.
                   Everything was either cheap and ugly, or imported and
                   overpriced.
@@ -316,7 +315,6 @@ export default function HomePage() {
             </Link>
           </div>
         </section>
-      {/* </StoreLayout> */}
     </>
   );
 }

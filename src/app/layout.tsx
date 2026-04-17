@@ -3,8 +3,6 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/hooks/cartContext";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 
@@ -48,10 +46,8 @@ export default function RootLayout({
         style={{ backgroundColor: "var(--brand-cream)" }}
       >
         <CartProvider>
-          <Navbar />
           {children}
           <Toaster position="bottom-right" richColors />
-          <Footer />
         </CartProvider>
       </body>
     </html>

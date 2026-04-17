@@ -4,13 +4,13 @@ import { Sparkles, Phone, MapPin, MessageCircle } from "lucide-react";
 export default function Footer() {
   return (
     <footer style={{ backgroundColor: "var(--brand-dark)", color: "#E8DDD4" }}>
-      <div className="max-w-6xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 mb-10 sm:mb-12">
           {/* Brand */}
-          <div className="md:col-span-2 space-y-4">
+          <div className="sm:col-span-2 space-y-4">
             <div className="flex items-center gap-2">
               <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
                 style={{ backgroundColor: "var(--brand-amber)" }}
               >
                 <Sparkles size={16} className="text-white" />
@@ -24,39 +24,50 @@ export default function Footer() {
               Aesthetic daily-use products for students, creatives, and anyone
               who believes their space deserves to look as good as they feel.
             </p>
-            <div
-              className="flex items-center gap-2 text-sm"
-              style={{ color: "#A89888" }}
-            >
-              <MapPin size={14} style={{ color: "var(--brand-amber)" }} />
-              <span>Dhaka, Bangladesh</span>
-            </div>
-            <div
-              className="flex items-center gap-2 text-sm"
-              style={{ color: "#A89888" }}
-            >
-              <Phone size={14} style={{ color: "var(--brand-amber)" }} />
-              <a
-                href="tel:+8801700000000"
-                className="hover:text-white transition-colors"
+            <div className="flex flex-col gap-2">
+              <div
+                className="flex items-center gap-2 text-sm"
+                style={{ color: "#A89888" }}
               >
-                +880 1700 000 000
-              </a>
-            </div>
-            <div
-              className="flex items-center gap-2 text-sm"
-              style={{ color: "#A89888" }}
-            >
-              <MessageCircle
-                size={14}
-                style={{ color: "var(--brand-amber)" }}
-              />
-              <a
-                href="https://wa.me/8801700000000"
-                className="hover:text-white transition-colors"
+                <MapPin
+                  size={14}
+                  style={{ color: "var(--brand-amber)" }}
+                  className="shrink-0"
+                />
+                <span>Dhaka, Bangladesh</span>
+              </div>
+              <div
+                className="flex items-center gap-2 text-sm"
+                style={{ color: "#A89888" }}
               >
-                WhatsApp Us
-              </a>
+                <Phone
+                  size={14}
+                  style={{ color: "var(--brand-amber)" }}
+                  className="shrink-0"
+                />
+                <a
+                  href="tel:+8801700000000"
+                  className="hover:text-white transition-colors"
+                >
+                  +880 1700 000 000
+                </a>
+              </div>
+              <div
+                className="flex items-center gap-2 text-sm"
+                style={{ color: "#A89888" }}
+              >
+                <MessageCircle
+                  size={14}
+                  style={{ color: "var(--brand-amber)" }}
+                  className="shrink-0"
+                />
+                <a
+                  href="https://wa.me/8801700000000"
+                  className="hover:text-white transition-colors"
+                >
+                  WhatsApp Us
+                </a>
+              </div>
             </div>
           </div>
 
@@ -123,7 +134,7 @@ export default function Footer() {
           className="border-t pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs"
           style={{ borderColor: "rgba(255,255,255,0.08)", color: "#6B5744" }}
         >
-          <p>
+          <p className="text-center sm:text-left">
             © {new Date().getFullYear()} AuraStore Bangladesh. All rights
             reserved.
           </p>

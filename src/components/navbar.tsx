@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingBag, Menu, Sparkles, X } from "lucide-react";
+import { ShoppingBag, Menu, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -24,11 +24,11 @@ export default function Navbar() {
         backdropFilter: "blur(12px)",
       }}
     >
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-4">
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 group"
+          className="flex items-center gap-2 group shrink-0"
           aria-label="AuraStore Home"
         >
           <div
@@ -39,13 +39,13 @@ export default function Navbar() {
           </div>
           <div className="flex items-baseline gap-1">
             <span
-              className="text-lg font-bold tracking-tight"
+              className="text-base sm:text-lg font-bold tracking-tight"
               style={{ color: "var(--brand-dark)" }}
             >
               Aura
             </span>
             <span
-              className="text-lg font-light"
+              className="text-base sm:text-lg font-light"
               style={{ color: "var(--brand-earth)" }}
             >
               Store
@@ -70,17 +70,17 @@ export default function Navbar() {
         </nav>
 
         {/* Cart + Mobile */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           <Link href="/cart" aria-label={`Cart — ${mounted ? count : 0} items`}>
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full relative hover:bg-stone-100"
+              className="rounded-full relative hover:bg-stone-100 w-9 h-9 sm:w-10 sm:h-10"
             >
-              <ShoppingBag size={20} style={{ color: "var(--brand-dark)" }} />
+              <ShoppingBag size={18} style={{ color: "var(--brand-dark)" }} />
               {mounted && count > 0 && (
                 <span
-                  className="absolute -top-0.5 -right-0.5 w-5 h-5 text-white text-[10px] font-bold rounded-full flex items-center justify-center"
+                  className="absolute -top-0.5 -right-0.5 w-4 h-4 sm:w-5 sm:h-5 text-white text-[9px] sm:text-[10px] font-bold rounded-full flex items-center justify-center"
                   style={{ backgroundColor: "var(--brand-earth)" }}
                 >
                   {count > 9 ? "9+" : count}
@@ -95,14 +95,14 @@ export default function Navbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-stone-100"
+                className="rounded-full hover:bg-stone-100 w-9 h-9 sm:w-10 sm:h-10"
               >
-                <Menu size={20} style={{ color: "var(--brand-dark)" }} />
+                <Menu size={18} style={{ color: "var(--brand-dark)" }} />
               </Button>
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="w-72 p-6"
+              className="w-[280px] sm:w-72 p-6"
               style={{ backgroundColor: "var(--brand-cream)" }}
             >
               <div className="flex items-center gap-2 mb-8">
@@ -150,7 +150,7 @@ export default function Navbar() {
                 </Link>
               </nav>
 
-              <div className="mt-auto pt-8 border-t border-stone-200 mt-8">
+              <div className="mt-8 pt-8 border-t border-stone-200">
                 <p className="text-xs text-stone-400">
                   Fast delivery · COD available · Bangladesh
                 </p>

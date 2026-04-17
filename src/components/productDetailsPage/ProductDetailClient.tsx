@@ -13,7 +13,6 @@ import {
   ChevronRight,
   Minus,
   Plus,
-  Package,
   BadgeCheck,
 } from "lucide-react";
 import { Product } from "@/types";
@@ -241,7 +240,7 @@ export default function ProductDetailClient({ product, related }: Props) {
                 className="text-sm font-semibold mb-3"
                 style={{ color: "var(--brand-dark)" }}
               >
-                What's Included
+                What&apos;s Included
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {product.features.map((f) => (

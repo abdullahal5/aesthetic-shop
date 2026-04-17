@@ -98,7 +98,7 @@ export default function ShopPage() {
             Not sure what to get?
           </h3>
           <p className="text-sm mb-4" style={{ color: "#8B7B70" }}>
-            WhatsApp or call us — we'll help you pick the perfect bottle.
+            WhatsApp or call us — we&apos;ll help you pick the perfect bottle.
           </p>
           <a
             href="https://wa.me/8801700000000?text=Hi%2C%20I%20need%20help%20picking%20a%20product%20from%20AuraStore"

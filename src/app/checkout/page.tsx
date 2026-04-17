@@ -200,7 +200,7 @@ export default function CheckoutPage() {
                   className={inputCls(!!errors.phone)}
                 />
                 <p className="text-xs text-stone-400 mt-1">
-                  We'll call this number to confirm before dispatch.
+                  We&apos;ll call this number to confirm before dispatch.
                 </p>
               </Field>
               <Field label="Email Address" error={errors.email}>
@@ -303,7 +303,7 @@ export default function CheckoutPage() {
               </div>
               <p className="text-xs text-stone-400 flex items-start gap-1.5">
                 <Truck size={12} className="mt-0.5 shrink-0" />
-                We'll call you at <strong>
+                We&apos;ll call you at <strong>
                   {form.phone || "your number"}
                 </strong>{" "}
                 to confirm before dispatch.
