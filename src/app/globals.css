@@ -92,6 +92,10 @@
   --brand-amber: #D4943A;
 }
 
+input:focus {
+  --tw-ring-color: var(--brand-sage);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

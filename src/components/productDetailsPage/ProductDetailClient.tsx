@@ -63,35 +63,6 @@ export default function ProductDetailClient({ product, related }: Props) {
       className="min-h-screen"
       style={{ backgroundColor: "var(--brand-cream)" }}
     >
-      {/* Breadcrumb */}
-      <div className="max-w-6xl mx-auto px-4 py-3 md:py-4">
-        <nav
-          className="flex items-center gap-1.5 text-xs overflow-x-auto"
-          style={{ color: "#8B7B70" }}
-        >
-          <Link
-            href="/"
-            className="hover:text-stone-900 transition-colors whitespace-nowrap"
-          >
-            Home
-          </Link>
-          <ChevronRight size={12} className="shrink-0" />
-          <Link
-            href="/shop"
-            className="hover:text-stone-900 transition-colors whitespace-nowrap"
-          >
-            Shop
-          </Link>
-          <ChevronRight size={12} className="shrink-0" />
-          <span
-            className="font-medium truncate"
-            style={{ color: "var(--brand-dark)" }}
-          >
-            {product.name}
-          </span>
-        </nav>
-      </div>
-
       {/* Main */}
       <div className="max-w-6xl mx-auto px-4 pb-12 md:pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12 lg:gap-12">

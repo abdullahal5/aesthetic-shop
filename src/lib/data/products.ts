@@ -13,6 +13,8 @@ Made from premium borosilicate glass with a hand-feel silicone sleeve, this 500m
 Leakproof bamboo lid, wide mouth for easy cleaning, and a minimalist design that works on your study desk, gym bag, or as a thoughtful gift.`,
     price: 650,
     originalPrice: 850,
+    videoUrl:
+      "https://file-examples.com/storage/fe72b8723a69e1ee99cdb63/2017/04/file_example_MP4_480_1_5MG.mp4",
     images: [
       {
         url: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=900&q=85",

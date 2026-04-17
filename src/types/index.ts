@@ -64,16 +64,15 @@ export interface Order {
   district: string;
   items: CartItem[];
   subtotal: number;
+  discount?: {
+    code: string;
+    amount: number;
+    percentage: number;
+  } | null;
   deliveryFee: number;
   total: number;
-  paymentMethod: "cod";
-  status:
-    | "pending"
-    | "confirmed"
-    | "processing"
-    | "shipped"
-    | "delivered"
-    | "cancelled";
+  paymentMethod: string;
+  status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
   note?: string;
   createdAt: string;
 }

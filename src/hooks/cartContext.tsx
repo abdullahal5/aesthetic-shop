@@ -9,6 +9,11 @@ import React, {
 } from "react";
 import { CartItem } from "@/types";
 
+interface Coupon {
+  code: string;
+  discount: number; // percentage
+}
+
 interface CartContextType {
   items: CartItem[];
   addItem: (item: CartItem) => void;
@@ -18,6 +23,12 @@ interface CartContextType {
   total: number;
   count: number;
   mounted: boolean;
+  // Discount related
+  appliedCoupon: Coupon | null;
+  applyCoupon: (coupon: Coupon) => void;
+  removeCoupon: () => void;
+  discountAmount: number;
+  grandTotal: number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -25,14 +36,21 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
 
+  // Load cart and coupon from localStorage
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     try {
-      const stored = localStorage.getItem("aura_cart");
-      if (stored) setItems(JSON.parse(stored));
+      const storedCart = localStorage.getItem("aura_cart");
+      if (storedCart) setItems(JSON.parse(storedCart));
+
+      const storedCoupon = localStorage.getItem("aura_coupon");
+      if (storedCoupon) setAppliedCoupon(JSON.parse(storedCoupon));
     } catch {
       setItems([]);
+      setAppliedCoupon(null);
     }
   }, []);
 
@@ -84,10 +102,28 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearCart = useCallback(() => {
     setItems([]);
     localStorage.removeItem("aura_cart");
+    setAppliedCoupon(null);
+    localStorage.removeItem("aura_coupon");
+  }, []);
+
+  // Coupon methods
+  const applyCoupon = useCallback((coupon: Coupon) => {
+    setAppliedCoupon(coupon);
+    localStorage.setItem("aura_coupon", JSON.stringify(coupon));
+  }, []);
+
+  const removeCoupon = useCallback(() => {
+    setAppliedCoupon(null);
+    localStorage.removeItem("aura_coupon");
   }, []);
 
   const total = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const count = items.reduce((sum, i) => sum + i.quantity, 0);
+
+  const discountAmount = appliedCoupon
+    ? (total * appliedCoupon.discount) / 100
+    : 0;
+  const grandTotal = total - discountAmount;
 
   return (
     <CartContext.Provider
@@ -100,6 +136,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         total,
         count,
         mounted,
+        appliedCoupon,
+        applyCoupon,
+        removeCoupon,
+        discountAmount,
+        grandTotal,
       }}
     >
       {children}
