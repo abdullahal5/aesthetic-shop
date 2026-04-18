@@ -127,7 +127,7 @@ export default function CheckoutPage() {
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Store only digits for validation
-    const digits = cleanPhoneNumber(e.target.value);
+    // const digits = cleanPhoneNumber(e.target.value);
 
     // Format for display but keep original input feel
     const formatted = formatForDisplay(e.target.value);
