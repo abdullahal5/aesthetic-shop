@@ -137,7 +137,7 @@ export default function ProductFormPage() {
     await new Promise((r) => setTimeout(r, 400));
     saveProduct(product);
     setSaving(false);
-    router.push("/admin/products");
+    router.push("/admin/dashboard/products");
   };
 
   return (
@@ -145,7 +145,7 @@ export default function ProductFormPage() {
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Link
-          href="/admin/products"
+          href="/admin/dashboard/products"
           className="p-2 rounded-xl hover:bg-stone-100 transition-colors text-stone-400"
         >
           <ChevronLeft size={20} />
@@ -457,7 +457,7 @@ export default function ProductFormPage() {
           </button>
 
           <Link
-            href="/admin/products"
+            href="/admin/dashboard/products"
             className="w-full h-11 rounded-xl text-sm font-medium border border-stone-200 flex items-center justify-center gap-2 hover:bg-stone-50 transition-colors"
             style={{ color: "var(--brand-dark)" }}
           >

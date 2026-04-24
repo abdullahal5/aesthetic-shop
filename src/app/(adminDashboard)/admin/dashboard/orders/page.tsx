@@ -112,6 +112,8 @@ function OrderCard({
               alt=""
               width={40}
               height={40}
+              loading="eager"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="w-full h-full object-cover"
             />
           </div>
@@ -205,7 +207,9 @@ function OrderCard({
                       src={item.image}
                       alt={item.name}
                       width={32}
+                      loading="eager"
                       height={32}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="w-full h-full object-cover"
                     />
                   </div>

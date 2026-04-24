@@ -78,6 +78,7 @@ export default function ProductDetailClient({ product, related }: Props) {
                   src={product.images[selectedImage].url}
                   alt={product.images[selectedImage].alt}
                   fill
+                  loading="eager"
                   className="object-cover transition-all duration-300"
                   priority
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 50vw"
@@ -102,6 +103,7 @@ export default function ProductDetailClient({ product, related }: Props) {
                       <Image
                         src={img.url}
                         alt={img.alt}
+                        loading="eager"
                         fill
                         className="object-cover"
                         sizes="80px"

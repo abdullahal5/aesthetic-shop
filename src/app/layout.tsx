@@ -1,8 +1,11 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/hooks/cartContext";
+import QueryProvider from "@/providers/QueryProvider";
+import ClientOnly from "@/components/ClientOnly";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 
@@ -40,15 +43,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <body
         className={`${geist.variable} font-sans antialiased`}
         style={{ backgroundColor: "var(--brand-cream)" }}
+        suppressHydrationWarning
       >
-        <CartProvider>
-          {children}
-          <Toaster position="bottom-right" richColors />
-        </CartProvider>
+        <QueryProvider>
+          <CartProvider>
+            {children}
+            {/* Wrap client-side only components */}
+            <ClientOnly>
+              <Toaster position="bottom-right" richColors />
+            </ClientOnly>
+          </CartProvider>
+        </QueryProvider>
       </body>
     </html>
   );

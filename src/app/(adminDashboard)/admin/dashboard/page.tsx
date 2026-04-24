@@ -113,7 +113,7 @@ export default function AdminDashboard() {
             icon: TrendingUp,
             color: "var(--brand-earth)",
             bg: "var(--brand-sand)",
-            link: "/admin/orders",
+            link: "/admin/dashboard/orders",
           },
           {
             label: "Total Orders",
@@ -121,7 +121,7 @@ export default function AdminDashboard() {
             icon: ShoppingBag,
             color: "#3B82F6",
             bg: "#EFF6FF",
-            link: "/admin/orders",
+            link: "/admin/dashboard/orders",
           },
           {
             label: "Active Products",
@@ -129,7 +129,7 @@ export default function AdminDashboard() {
             icon: Package,
             color: "#8B5CF6",
             bg: "#F5F3FF",
-            link: "/admin/products",
+            link: "/admin/dashboard/products",
           },
           {
             label: "Active Coupons",
@@ -137,7 +137,7 @@ export default function AdminDashboard() {
             icon: Tag,
             color: "#10B981",
             bg: "#F0FDF4",
-            link: "/admin/discounts",
+            link: "/admin/dashboard/discounts",
           },
         ].map((stat) => (
           <Link
@@ -179,7 +179,7 @@ export default function AdminDashboard() {
               Recent Orders
             </h2>
             <Link
-              href="/admin/orders"
+              href="/admin/dashboard/orders"
               className="text-xs font-medium flex items-center gap-1 hover:underline"
               style={{ color: "var(--brand-earth)" }}
             >
@@ -197,7 +197,7 @@ export default function AdminDashboard() {
                 return (
                   <Link
                     key={order.id}
-                    href={`/admin/orders`}
+                    href={`/admin/dashboard/orders`}
                     className="flex items-center gap-3 px-5 py-3.5 hover:bg-stone-50 transition-colors"
                   >
                     {/* Product thumb */}
@@ -210,6 +210,8 @@ export default function AdminDashboard() {
                         alt={order.items[0]?.name || ""}
                         width={40}
                         height={40}
+                        loading="eager"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -303,13 +305,13 @@ export default function AdminDashboard() {
             </p>
             {[
               {
-                href: "/admin/products/new",
+                href: "/admin/dashboard/products/new",
                 label: "Add New Product",
                 icon: Package,
               },
-              { href: "/admin/discounts", label: "Create Discount", icon: Tag },
+              { href: "/admin/dashboard/discounts", label: "Create Discount", icon: Tag },
               {
-                href: "/admin/banners",
+                href: "/admin/dashboard/banners",
                 label: "Manage Banners",
                 icon: ShoppingBag,
               },

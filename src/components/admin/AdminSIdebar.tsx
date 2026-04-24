@@ -13,7 +13,8 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useLogout } from "@/hooks/auth/useAuth";
 
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -23,17 +24,15 @@ const navItems = [
   { href: "/admin/dashboard/banners", label: "Banners", icon: Image },
 ];
 
-// Move SidebarContent outside of the main component
+// SidebarContent component remains the same
 function SidebarContent({ onItemClick }: { onItemClick?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
+  const logoutMutation = useLogout();
 
   const handleLogout = async () => {
     try {
-      const { logoutAdmin } = await import("@/lib/admin/adminAuth");
-      await logoutAdmin();
-      router.push("/admin/login");
-      router.refresh();
+      await logoutMutation.mutateAsync();
     } catch (error) {
       console.error("Logout error:", error);
     }
@@ -98,10 +97,20 @@ function SidebarContent({ onItemClick }: { onItemClick?: () => void }) {
             handleLogout();
             onItemClick?.();
           }}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-stone-400 hover:text-red-400 hover:bg-red-400/10 transition-all duration-200"
+          disabled={logoutMutation.isPending}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-stone-400 hover:text-red-400 hover:bg-red-400/10 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <LogOut size={17} />
-          Sign Out
+          {logoutMutation.isPending ? (
+            <>
+              <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+              <span>Signing out...</span>
+            </>
+          ) : (
+            <>
+              <LogOut size={17} />
+              <span>Sign Out</span>
+            </>
+          )}
         </button>
       </div>
     </div>
@@ -135,26 +144,18 @@ function MobileDrawer({
 }
 
 export default function AdminSidebar() {
-  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Close mobile menu when route changes
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMobileOpen(false);
-  }, [pathname]);
-
-  // Prevent body scroll when mobile menu is open
-  useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [mobileOpen]);
+   useEffect(() => {
+     if (mobileOpen) {
+       document.body.style.overflow = "hidden";
+     } else {
+       document.body.style.overflow = "unset";
+     }
+     return () => {
+       document.body.style.overflow = "unset";
+     };
+   }, [mobileOpen]);
 
   return (
     <>

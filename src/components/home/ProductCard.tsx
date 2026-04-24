@@ -55,6 +55,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           src={product.images[0].url}
           alt={product.images[0].alt}
           fill
+          loading="eager"
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />

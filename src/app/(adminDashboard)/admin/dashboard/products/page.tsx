@@ -88,7 +88,7 @@ export default function AdminProductsPage() {
           </p>
         </div>
         <Link
-          href="/admin/products/new"
+          href="/admin/dashboard/products/new"
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
           style={{ backgroundColor: "var(--brand-earth)" }}
         >
@@ -174,7 +174,9 @@ export default function AdminProductsPage() {
                         src={validImageUrl}
                         alt={product.name}
                         width={48}
+                        loading="eager"
                         height={48}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           // Fallback if image fails to load
@@ -265,7 +267,7 @@ export default function AdminProductsPage() {
                   {/* Actions */}
                   <div className="flex items-center gap-2">
                     <Link
-                      href={`/admin/products/${product.id}`}
+                      href={`/admin/dashboard/products/${product.id}`}
                       className="p-2 rounded-lg hover:bg-stone-100 transition-colors text-stone-400 hover:text-stone-700"
                     >
                       <Pencil size={15} />

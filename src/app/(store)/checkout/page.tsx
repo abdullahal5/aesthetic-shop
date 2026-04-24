@@ -450,6 +450,7 @@ export default function CheckoutPage() {
                       fill
                       className="object-cover"
                       sizes="48px"
+                      loading="eager"
                     />
                   </div>
                   <div className="flex-1 min-w-0">

@@ -76,3 +76,11 @@ export interface Order {
   note?: string;
   createdAt: string;
 }
+
+// API Response Wrapper (matching your backend's sendResponse)
+export type TApiResponse<T> = {
+  statusCode: number;
+  success: boolean;
+  message?: string;
+  data: T;
+};

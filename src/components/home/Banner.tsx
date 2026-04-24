@@ -106,6 +106,7 @@ export default function HeroBanner() {
           className="object-cover"
           priority
           sizes="100vw"
+          loading="eager"
           quality={85}
         />
         {/* Overlay - optimized for mobile readability */}
