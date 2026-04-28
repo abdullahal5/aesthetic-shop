@@ -3,10 +3,10 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   // 🔹 Needed for monorepo / pnpm / turborepo setups
-  outputFileTracingRoot: path.join(__dirname, "../"),
+  // outputFileTracingRoot: path.join(__dirname, "../"),
 
   // 🔹 Standalone build (works great on Vercel, Docker, VPS)
-  output: "standalone",
+  // output: "standalone",
 
   // 🔹 React best practices
   reactStrictMode: true,

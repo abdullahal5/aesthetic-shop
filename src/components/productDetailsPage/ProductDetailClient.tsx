@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import {
   Star,
   ShoppingBag,
@@ -10,34 +9,34 @@ import {
   Truck,
   ShieldCheck,
   Phone,
-  ChevronRight,
   Minus,
   Plus,
   BadgeCheck,
 } from "lucide-react";
-import { Product } from "@/types";
+import type { Product } from "@/types/product.types";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import ProductCard from "../home/ProductCard";
 import { useCart } from "@/hooks/cartContext";
+import { useRouter } from "next/navigation";
 
 interface Props {
   product: Product;
-  related: Product[];
 }
 
-export default function ProductDetailClient({ product, related }: Props) {
+export default function ProductDetailClient({ product }: Props) {
   const { addItem } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const router = useRouter();
 
   const avgRating =
-    product.reviews.length > 0
+    product.reviews && product.reviews.length > 0
       ? product.reviews.reduce((s, r) => s + r.rating, 0) /
         product.reviews.length
       : 0;
+
   const discount = product.originalPrice
     ? Math.round(
         ((product.originalPrice - product.price) / product.originalPrice) * 100,
@@ -45,6 +44,11 @@ export default function ProductDetailClient({ product, related }: Props) {
     : null;
 
   const handleAdd = () => {
+    if (product.stock === 0) {
+      toast.error("Product is out of stock");
+      return;
+    }
+
     addItem({
       productId: product.id,
       name: product.name,
@@ -58,6 +62,27 @@ export default function ProductDetailClient({ product, related }: Props) {
     setTimeout(() => setAdded(false), 2500);
   };
 
+  const handleBuyNow = () => {
+    if (product.stock === 0) {
+      toast.error("Product is out of stock");
+      return;
+    }
+
+    addItem({
+      productId: product.id,
+      name: product.name,
+      price: product.price,
+      quantity,
+      image: product.images[0].url,
+      slug: product.slug,
+    });
+
+    // Small delay to ensure cart is updated
+    setTimeout(() => {
+      router.push("/checkout");
+    }, 100);
+  };
+
   return (
     <div
       className="min-h-screen"
@@ -66,17 +91,16 @@ export default function ProductDetailClient({ product, related }: Props) {
       {/* Main */}
       <div className="max-w-6xl mx-auto px-4 pb-12 md:pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12 lg:gap-12">
-          {/* Images - Sticky on Mobile, Sticky on Desktop */}
+          {/* Images - Sticky on Desktop */}
           <div className="space-y-3 lg:sticky lg:top-24 lg:self-start">
-            {/* Sticky wrapper for mobile */}
             <div className="sticky top-0 z-20 lg:static lg:z-auto space-y-3">
               <div
                 className="relative aspect-square rounded-2xl md:rounded-3xl overflow-hidden"
                 style={{ backgroundColor: "var(--brand-sand)" }}
               >
                 <Image
-                  src={product.images[selectedImage].url}
-                  alt={product.images[selectedImage].alt}
+                  src={product.images[selectedImage]?.url || "/placeholder.jpg"}
+                  alt={product.images[selectedImage]?.alt || product.name}
                   fill
                   loading="eager"
                   className="object-cover transition-all duration-300"
@@ -91,14 +115,25 @@ export default function ProductDetailClient({ product, related }: Props) {
                     -{discount}% OFF
                   </div>
                 )}
+                {product.stock === 0 && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                    <span className="text-white font-bold text-lg px-4 py-2 bg-black/70 rounded-full">
+                      Out of Stock
+                    </span>
+                  </div>
+                )}
               </div>
-              {product.images.length > 1 && (
+              {product.images && product.images.length > 1 && (
                 <div className="flex gap-2 overflow-x-auto pb-2">
                   {product.images.map((img, i) => (
                     <button
                       key={i}
                       onClick={() => setSelectedImage(i)}
-                      className={`relative w-16 h-16 md:w-20 md:h-20 rounded-xl md:rounded-2xl overflow-hidden border-2 transition-all duration-200 shrink-0 ${selectedImage === i ? "border-amber-500 shadow-md" : "border-transparent hover:border-stone-300"}`}
+                      className={`relative w-16 h-16 md:w-20 md:h-20 rounded-xl md:rounded-2xl overflow-hidden border-2 transition-all duration-200 shrink-0 ${
+                        selectedImage === i
+                          ? "border-amber-500 shadow-md"
+                          : "border-transparent hover:border-stone-300"
+                      }`}
                     >
                       <Image
                         src={img.url}
@@ -130,7 +165,7 @@ export default function ProductDetailClient({ product, related }: Props) {
                 >
                   {product.category}
                 </Badge>
-                {product.stock <= 5 && (
+                {product.stock > 0 && product.stock <= 5 && (
                   <Badge
                     variant="outline"
                     className="text-red-600 border-red-200 bg-red-50 text-xs rounded-full"
@@ -176,7 +211,7 @@ export default function ProductDetailClient({ product, related }: Props) {
                   {avgRating.toFixed(1)}
                 </span>
                 <span className="text-xs md:text-sm text-stone-400">
-                  ({product.reviews.length})
+                  ({product.reviews?.length || 0})
                 </span>
                 <span className="text-xs md:text-sm text-stone-400">·</span>
                 <span className="text-xs md:text-sm text-stone-400">
@@ -212,74 +247,78 @@ export default function ProductDetailClient({ product, related }: Props) {
               style={{ color: "#6B5744" }}
             >
               {product.description
-                .split("\n\n")
+                ?.split("\n\n")
                 .map((para, i) => para.trim() && <p key={i}>{para.trim()}</p>)}
             </div>
 
             {/* Features */}
-            <div>
-              <h3
-                className="text-xs md:text-sm font-semibold mb-2 md:mb-3"
-                style={{ color: "var(--brand-dark)" }}
-              >
-                What&apos;s Included
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {product.features.map((f) => (
-                  <div
-                    key={f}
-                    className="flex items-center gap-2 text-xs md:text-sm"
-                    style={{ color: "#6B5744" }}
-                  >
-                    <Check
-                      size={13}
-                      style={{ color: "var(--brand-sage)" }}
-                      className="shrink-0"
-                    />
-                    <span>{f}</span>
-                  </div>
-                ))}
+            {product.features && product.features.length > 0 && (
+              <div>
+                <h3
+                  className="text-xs md:text-sm font-semibold mb-2 md:mb-3"
+                  style={{ color: "var(--brand-dark)" }}
+                >
+                  What&apos;s Included
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {product.features.map((f) => (
+                    <div
+                      key={f}
+                      className="flex items-center gap-2 text-xs md:text-sm"
+                      style={{ color: "#6B5744" }}
+                    >
+                      <Check
+                        size={13}
+                        style={{ color: "var(--brand-sage)" }}
+                        className="shrink-0"
+                      />
+                      <span>{f}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Quantity */}
-            <div className="space-y-2">
-              <label
-                className="text-xs md:text-sm font-medium"
-                style={{ color: "var(--brand-dark)" }}
-              >
-                Quantity
-              </label>
-              <div className="flex items-center gap-2 md:gap-3">
-                <div className="flex items-center border border-stone-200 rounded-full overflow-hidden">
-                  <button
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center hover:bg-stone-50 transition-colors disabled:opacity-40"
-                    disabled={quantity <= 1}
-                  >
-                    <Minus size={14} />
-                  </button>
-                  <span
-                    className="w-8 md:w-10 text-center font-semibold text-xs md:text-sm"
-                    style={{ color: "var(--brand-dark)" }}
-                  >
-                    {quantity}
+            {product.stock > 0 && (
+              <div className="space-y-2">
+                <label
+                  className="text-xs md:text-sm font-medium"
+                  style={{ color: "var(--brand-dark)" }}
+                >
+                  Quantity
+                </label>
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="flex items-center border border-stone-200 rounded-full overflow-hidden">
+                    <button
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center hover:bg-stone-50 transition-colors disabled:opacity-40"
+                      disabled={quantity <= 1}
+                    >
+                      <Minus size={14} />
+                    </button>
+                    <span
+                      className="w-8 md:w-10 text-center font-semibold text-xs md:text-sm"
+                      style={{ color: "var(--brand-dark)" }}
+                    >
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={() =>
+                        setQuantity((q) => Math.min(product.stock, q + 1))
+                      }
+                      className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center hover:bg-stone-50 transition-colors disabled:opacity-40"
+                      disabled={quantity >= product.stock}
+                    >
+                      <Plus size={14} />
+                    </button>
+                  </div>
+                  <span className="text-xs text-stone-400">
+                    {product.stock} available
                   </span>
-                  <button
-                    onClick={() =>
-                      setQuantity((q) => Math.min(product.stock, q + 1))
-                    }
-                    className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center hover:bg-stone-50 transition-colors disabled:opacity-40"
-                    disabled={quantity >= product.stock}
-                  >
-                    <Plus size={14} />
-                  </button>
                 </div>
-                <span className="text-xs text-stone-400">
-                  {product.stock} available
-                </span>
               </div>
-            </div>
+            )}
 
             {/* CTA Buttons */}
             <div className="space-y-2 md:space-y-3 sticky bottom-0 z-30 bg-linear-to-t from-white via-white to-transparent pt-4 md:static md:pt-0">
@@ -308,25 +347,16 @@ export default function ProductDetailClient({ product, related }: Props) {
                   </>
                 )}
               </Button>
-              <Link href="/checkout">
+              {product.stock > 0 && (
                 <Button
                   variant="outline"
                   className="w-full h-11 md:h-13 rounded-full text-xs md:text-sm font-semibold border-stone-300 hover:bg-stone-50"
-                  onClick={() =>
-                    addItem({
-                      productId: product.id,
-                      name: product.name,
-                      price: product.price,
-                      quantity,
-                      image: product.images[0].url,
-                      slug: product.slug,
-                    })
-                  }
+                  onClick={handleBuyNow}
                   style={{ color: "var(--brand-dark)" }}
                 >
                   Buy Now
                 </Button>
-              </Link>
+              )}
             </div>
 
             {/* Trust signals */}
@@ -367,7 +397,7 @@ export default function ProductDetailClient({ product, related }: Props) {
             </div>
 
             {/* Tags */}
-            {product.tags.length > 0 && (
+            {product.tags && product.tags.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {product.tags.map((tag) => (
                   <span
@@ -383,7 +413,7 @@ export default function ProductDetailClient({ product, related }: Props) {
         </div>
 
         {/* Reviews */}
-        {product.reviews.length > 0 && (
+        {product.reviews && product.reviews.length > 0 && (
           <section className="mt-12 md:mt-16">
             <div className="flex items-end gap-3 md:gap-4 mb-6 md:mb-8 flex-wrap">
               <h2
@@ -481,22 +511,7 @@ export default function ProductDetailClient({ product, related }: Props) {
           </section>
         )}
 
-        {/* Related */}
-        {related.length > 0 && (
-          <section className="mt-12 md:mt-16">
-            <h2
-              className="text-xl md:text-2xl font-bold mb-6 md:mb-8"
-              style={{ color: "var(--brand-dark)" }}
-            >
-              You might also like
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
-              {related.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
-          </section>
-        )}
+        {/* Related Products Section with loading and error states */}
       </div>
     </div>
   );

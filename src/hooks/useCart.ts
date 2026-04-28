@@ -1,14 +1,13 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { CartItem } from "@/types";
 
 export function useCart() {
-  const [items, setItems] = useState<CartItem[]>([]);
-
-  useEffect(() => {
+  const [items, setItems] = useState<CartItem[]>(() => {
+    if (typeof window === "undefined") return [];
     const stored = localStorage.getItem("cart");
-    if (stored) setItems(JSON.parse(stored));
-  }, []);
+    return stored ? JSON.parse(stored) : [];
+  });
 
   const addItem = (item: CartItem) => {
     setItems((prev) => {

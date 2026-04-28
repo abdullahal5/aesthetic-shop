@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Package,
@@ -13,7 +13,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useLogout } from "@/hooks/auth/useAuth";
 
 const navItems = [
@@ -27,7 +27,6 @@ const navItems = [
 // SidebarContent component remains the same
 function SidebarContent({ onItemClick }: { onItemClick?: () => void }) {
   const pathname = usePathname();
-  const router = useRouter();
   const logoutMutation = useLogout();
 
   const handleLogout = async () => {
@@ -197,7 +196,7 @@ export default function AdminSidebar() {
       <MobileDrawer isOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
 
       {/* Spacer for mobile header */}
-      <div className="lg:hidden h-[57px]" />
+      <div className="lg:hidden h-14.25" />
     </>
   );
 }

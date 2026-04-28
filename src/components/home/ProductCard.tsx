@@ -15,11 +15,11 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
 
-  const avgRating =
-    product.reviews.length > 0
-      ? product.reviews.reduce((s, r) => s + r.rating, 0) /
-        product.reviews.length
-      : 0;
+  // const avgRating =
+  //   5 +5 < 0
+  //     ? 25 /
+  //       5
+  //     : 0;
 
   const discount = product.originalPrice
     ? Math.round(
@@ -117,7 +117,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Rating */}
-        {avgRating > 0 && (
+        {/* {avgRating > 0 && (
           <div className="flex items-center gap-1.5">
             <div className="flex">
               {[1, 2, 3, 4, 5].map((s) => (
@@ -136,7 +136,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               {avgRating.toFixed(1)} ({product.reviews.length})
             </span>
           </div>
-        )}
+        )} */}
 
         {/* Price */}
         <div className="flex items-center justify-between pt-0.5">
