@@ -18,7 +18,7 @@ export const productService = {
     payload: TCreateProductRequest,
   ): Promise<TProductResponse> => {
     const { data } = await axiosClient.post<TProductResponse>(
-      "/admin/products",
+      "/products",
       payload,
     );
     return data;
@@ -49,7 +49,7 @@ export const productService = {
     payload: TUpdateProductRequest,
   ): Promise<TProductResponse> => {
     const { data } = await axiosClient.patch<TProductResponse>(
-      `/admin/products/${id}`,
+      `/products/${id}`,
       payload,
     );
     return data;
@@ -58,7 +58,7 @@ export const productService = {
   // Delete product
   deleteProduct: async (id: string): Promise<TDeleteProductResponse> => {
     const { data } = await axiosClient.delete<TDeleteProductResponse>(
-      `/admin/products/${id}`,
+      `/products/${id}`,
     );
     return data;
   },
@@ -69,7 +69,7 @@ export const productService = {
     payload: TUpdateStockRequest,
   ): Promise<TProductResponse> => {
     const { data } = await axiosClient.patch<TProductResponse>(
-      `/admin/products/${id}/stock`,
+      `/products/${id}/stock`,
       payload,
     );
     return data;
@@ -81,7 +81,7 @@ export const productService = {
     payload: TUpdateStatusRequest,
   ): Promise<TProductResponse> => {
     const { data } = await axiosClient.patch<TProductResponse>(
-      `/admin/products/${id}/status`,
+      `/products/${id}/status`,
       payload,
     );
     return data;

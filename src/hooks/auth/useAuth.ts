@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { authService } from "@/services/auth.service";
@@ -12,8 +14,11 @@ export const authKeys = {
   adminInfo: () => [...authKeys.all, "admin-info"] as const,
 };
 
-// Query: Get admin info - Check cookie instead of localStorage
+// -------------------------
+// GET ADMIN INFO
+// -------------------------
 export const useAdminInfo = () => {
+
   const isBrowser = typeof window !== "undefined";
   const token = isBrowser ? getCookie("accessToken") : null;
 
@@ -21,98 +26,119 @@ export const useAdminInfo = () => {
     queryKey: authKeys.adminInfo(),
     queryFn: authService.getAdminInfo,
     staleTime: 1000 * 60 * 10,
-    // Only enable on client-side when token exists in cookie
     enabled: isBrowser && !!token,
     retry: 1,
   });
 };
 
-// Mutation: Login - Store ONLY in cookies
+// -------------------------
+// LOGIN
+// -------------------------
 export const useLogin = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
   return useMutation({
     mutationFn: (payload: TLoginRequest) => authService.login(payload),
+
     onSuccess: (data) => {
-      if (data.success && data.data) {
-        // ✅ Store ONLY in cookies (not localStorage)
-        if (data.data.accessToken && data.data.refreshToken) {
-          setCookie("accessToken", data.data.accessToken, 1);
-          setCookie("refreshToken", data.data.refreshToken, 7);
-        }
+      if (!data.success || !data.data) return;
 
-        // ✅ Store admin info in localStorage (non-sensitive, for UI)
-        if (data.data.admin) {
-          localStorage.setItem("adminInfo", JSON.stringify(data.data.admin));
-        }
+      const { accessToken, refreshToken, admin } = data.data;
 
-        // Show success toast
-        showToast.success(
-          authToasts.loginSuccess(data.data.admin?.username).title,
-          {
-            description: authToasts.loginSuccess(data.data.admin?.username)
-              .description,
-            duration: 3000,
-            icon: "🎉",
-          },
-        );
+      // ✅ Secure tokens in cookies
+      if (accessToken) setCookie("accessToken", accessToken, 1);
+      if (refreshToken) setCookie("refreshToken", refreshToken, 7);
 
-        queryClient.invalidateQueries({ queryKey: authKeys.adminInfo() });
-
-        setTimeout(() => {
-          router.replace("/admin/dashboard");
-        }, 500);
+      // ✅ UI-only data in localStorage
+      if (typeof window !== "undefined" && admin) {
+        localStorage.setItem("adminInfo", JSON.stringify(admin));
       }
+
+      showToast.success(authToasts.loginSuccess(admin?.username).title, {
+        description: authToasts.loginSuccess(admin?.username).description,
+        duration: 3000,
+        icon: "🎉",
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: authKeys.adminInfo(),
+      });
+
+      setTimeout(() => {
+        router.replace("/admin/dashboard");
+      }, 400);
     },
+
     onError: (error: any) => {
       console.error("Login failed:", error);
 
-      const errorMessage =
+      const message =
         error?.response?.data?.message ||
         error?.message ||
-        "Invalid username or password";
+        "Invalid credentials";
 
-      showToast.error(authToasts.loginError(errorMessage).title, {
-        description: authToasts.loginError(errorMessage).description,
+      showToast.error(authToasts.loginError(message).title, {
+        description: authToasts.loginError(message).description,
         duration: 4000,
       });
 
-      // Clear cookies on error
+      // Cleanup
       deleteCookie("accessToken");
       deleteCookie("refreshToken");
-      localStorage.removeItem("adminInfo");
+
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("adminInfo");
+      }
     },
   });
 };
 
-// Mutation: Logout - Clear cookies
+// -------------------------
+// LOGOUT
+// -------------------------
 export const useLogout = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
   return useMutation({
     mutationFn: authService.logout,
+
     onSuccess: () => {
-      // ✅ Clear cookies
+      // Clear auth state
       deleteCookie("accessToken");
       deleteCookie("refreshToken");
-      localStorage.removeItem("adminInfo");
+
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("adminInfo");
+      }
+
+      queryClient.removeQueries({ queryKey: authKeys.all });
+      queryClient.clear();
 
       showToast.success(authToasts.logoutSuccess.title, {
         description: authToasts.logoutSuccess.description,
         duration: 3000,
       });
 
-      queryClient.removeQueries({ queryKey: authKeys.all });
-      queryClient.clear();
-
       setTimeout(() => {
         router.replace("/admin/login");
-      }, 500);
+      }, 400);
     },
+
     onError: (error: any) => {
       console.error("Logout failed:", error);
+
+      // Still force cleanup (important)
+      deleteCookie("accessToken");
+      deleteCookie("refreshToken");
+
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("adminInfo");
+      }
+
+      queryClient.removeQueries({ queryKey: authKeys.all });
+      queryClient.clear();
 
       showToast.error(authToasts.logoutError.title, {
         description:
@@ -120,15 +146,9 @@ export const useLogout = () => {
         duration: 4000,
       });
 
-      // Still clear cookies even if API call fails
-      deleteCookie("accessToken");
-      deleteCookie("refreshToken");
-      localStorage.removeItem("adminInfo");
-      queryClient.removeQueries({ queryKey: authKeys.all });
-
       setTimeout(() => {
         router.replace("/admin/login");
-      }, 500);
+      }, 400);
     },
   });
 };

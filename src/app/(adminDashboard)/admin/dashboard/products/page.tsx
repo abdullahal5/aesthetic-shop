@@ -1,14 +1,21 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Search, Pencil, Trash2, Star, Package } from "lucide-react";
 import {
-  AdminProduct,
-  deleteProduct,
-  getAdminProducts,
-} from "@/lib/admin/adminData";
+  Plus,
+  Search,
+  Pencil,
+  Trash2,
+  Star,
+  Package,
+  RefreshCw,
+} from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import type { Product } from "@/types/product.types";
+import { productKeys, useDeleteProduct, useProducts } from "@/hooks/product/useProduct";
 
 const statusStyle = {
   active: { bg: "#D1FAE5", color: "#065F46", label: "Active" },
@@ -16,57 +23,140 @@ const statusStyle = {
   archived: { bg: "#F3F4F6", color: "#6B7280", label: "Archived" },
 };
 
-// Helper function to validate image URL
-const getValidImageUrl = (url: string | undefined) => {
+// Helper function to validate image URL - handles different data types safely
+const getValidImageUrl = (url: string | undefined | any) => {
+  // If no URL provided
   if (!url) return "/placeholder-image.jpg";
-  // Check if URL is valid (starts with http://, https://, or /)
-  if (
-    url.startsWith("http://") ||
-    url.startsWith("https://") ||
-    url.startsWith("/")
-  ) {
-    return url;
+
+  // If url is a string, check if it's valid
+  if (typeof url === "string") {
+    if (
+      url.startsWith("http://") ||
+      url.startsWith("https://") ||
+      url.startsWith("/")
+    ) {
+      return url;
+    }
+    return "/placeholder-image.jpg";
   }
-  // Return placeholder for invalid URLs
+
+  // If url is an object with a url property (common in APIs)
+  if (typeof url === "object" && url !== null) {
+    const imageUrl = url.url || url.src || url.path;
+    if (imageUrl && typeof imageUrl === "string") {
+      return getValidImageUrl(imageUrl);
+    }
+  }
+
+  // Fallback for any other case
   return "/placeholder-image.jpg";
 };
 
+// Map API product status to status style keys
+const getStatusKey = (status: string): "active" | "draft" | "archived" => {
+  switch (status?.toLowerCase()) {
+    case "active":
+      return "active";
+    case "draft":
+      return "draft";
+    case "archived":
+      return "archived";
+    default:
+      return "draft";
+  }
+};
+
+// Helper to extract image URL from various formats
+const extractImageUrl = (image: any): string => {
+  if (!image) return "";
+  if (typeof image === "string") return image;
+  if (typeof image === "object") {
+    return image.url || image.src || image.path || "";
+  }
+  return "";
+};
+
 export default function AdminProductsPage() {
-  const [products, setProducts] = useState<AdminProduct[]>([]);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
 
-  // Fix hydration mismatch by waiting for client-side mount
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true);
-    setProducts(getAdminProducts());
-  }, []);
+  const queryClient = useQueryClient();
 
-  const filtered = products.filter((p) => {
-    const matchSearch =
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.category.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = filterStatus === "all" || p.status === filterStatus;
-    return matchSearch && matchStatus;
+  // Fetch products from API
+  const {
+    data: products = [],
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useProducts({
+    status: filterStatus !== "all" ? filterStatus : undefined,
   });
 
-  const handleDelete = (id: string) => {
-    deleteProduct(id);
-    setProducts(getAdminProducts());
-    setDeleteConfirm(null);
+  const deleteProductMutation = useDeleteProduct();
+
+  // Filter products by search (client-side filtering since API doesn't have search param)
+  const filtered = products.filter((p: Product) => {
+    const matchSearch =
+      p.name.toLowerCase().includes(search.toLowerCase()) ||
+      p.category?.toLowerCase().includes(search.toLowerCase());
+    return matchSearch;
+  });
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteProductMutation.mutateAsync(id);
+      setDeleteConfirm(null);
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: productKeys.lists() });
+    } catch (error) {
+      console.error("Delete failed:", error);
+    }
   };
 
-  // Don't render on server to avoid hydration mismatch
-  if (!mounted) {
+  const handleRefetch = () => {
+    refetch();
+  };
+
+  // Loading state
+  if (isLoading) {
     return (
       <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
         <div className="animate-pulse">
           <div className="h-8 bg-stone-200 rounded w-48 mb-4"></div>
           <div className="h-10 bg-stone-200 rounded w-full mb-4"></div>
-          <div className="h-96 bg-stone-200 rounded"></div>
+          <div className="space-y-3">
+            <div className="h-16 bg-stone-200 rounded"></div>
+            <div className="h-16 bg-stone-200 rounded"></div>
+            <div className="h-16 bg-stone-200 rounded"></div>
+            <div className="h-16 bg-stone-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <div className="p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
+          <Package size={48} className="mx-auto mb-4 text-red-400" />
+          <h2 className="text-lg font-semibold text-red-700 mb-2">
+            Failed to load products
+          </h2>
+          <p className="text-red-600 text-sm mb-4">
+            {error?.message || "An error occurred while fetching products."}
+          </p>
+          <button
+            onClick={handleRefetch}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-colors"
+          >
+            <RefreshCw size={16} />
+            Try Again
+          </button>
         </div>
       </div>
     );
@@ -83,18 +173,35 @@ export default function AdminProductsPage() {
           >
             Products
           </h1>
-          <p className="text-sm text-stone-400 mt-0.5">
-            {products.length} total products
-          </p>
+          <div className="flex items-center gap-2 mt-0.5">
+            <p className="text-sm text-stone-400">
+              {filtered.length} of {products.length} total products
+            </p>
+            {isFetching && !isLoading && (
+              <div className="flex items-center gap-1 text-xs text-stone-400">
+                <RefreshCw size={12} className="animate-spin" />
+                <span>Updating...</span>
+              </div>
+            )}
+          </div>
         </div>
-        <Link
-          href="/admin/dashboard/products/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-          style={{ backgroundColor: "var(--brand-earth)" }}
-        >
-          <Plus size={16} />
-          Add Product
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleRefetch}
+            className="p-2 rounded-xl text-stone-400 hover:text-stone-600 hover:bg-stone-100 transition-colors"
+            disabled={isFetching}
+          >
+            <RefreshCw size={18} className={isFetching ? "animate-spin" : ""} />
+          </button>
+          <Link
+            href="/admin/dashboard/products/new"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+            style={{ backgroundColor: "var(--brand-earth)" }}
+          >
+            <Plus size={16} />
+            Add Product
+          </Link>
+        </div>
       </div>
 
       {/* Filters */}
@@ -148,16 +255,52 @@ export default function AdminProductsPage() {
 
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-stone-400">
-            <Package size={32} className="mb-3 opacity-40" />
-            <p className="text-sm font-medium">No products found</p>
+            {search || filterStatus !== "all" ? (
+              <>
+                <Package size={32} className="mb-3 opacity-40" />
+                <p className="text-sm font-medium">
+                  No matching products found
+                </p>
+                <p className="text-xs mt-1">
+                  Try adjusting your search or filter
+                </p>
+                <button
+                  onClick={() => {
+                    setSearch("");
+                    setFilterStatus("all");
+                  }}
+                  className="mt-4 text-sm text-amber-600 hover:text-amber-700"
+                >
+                  Clear filters
+                </button>
+              </>
+            ) : (
+              <>
+                <Package size={32} className="mb-3 opacity-40" />
+                <p className="text-sm font-medium">No products yet</p>
+                <p className="text-xs mt-1">
+                  Get started by adding your first product
+                </p>
+                <Link
+                  href="/admin/dashboard/products/new"
+                  className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium text-white transition-all hover:opacity-90"
+                  style={{ backgroundColor: "var(--brand-earth)" }}
+                >
+                  <Plus size={14} />
+                  Add Product
+                </Link>
+              </>
+            )}
           </div>
         ) : (
           <div className="divide-y divide-stone-50">
-            {filtered.map((product) => {
-              const st = statusStyle[product.status];
-              const imageUrl =
-                product.images?.[0]?.url || product.images?.[0] || "";
-              const validImageUrl = getValidImageUrl(imageUrl as string);
+            {filtered.map((product: Product) => {
+              const statusKey = getStatusKey(product.status);
+              const st = statusStyle[statusKey];
+              const imageUrl = extractImageUrl(product.images?.[0]);
+              const validImageUrl = getValidImageUrl(imageUrl);
+              const isDeleting =
+                deleteProductMutation.isPending && deleteConfirm === product.id;
 
               return (
                 <div
@@ -169,24 +312,18 @@ export default function AdminProductsPage() {
                     className="w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-stone-100 flex items-center justify-center"
                     style={{ backgroundColor: "var(--brand-sand)" }}
                   >
-                    {validImageUrl ? (
+                    {validImageUrl &&
+                    validImageUrl !== "/placeholder-image.jpg" ? (
                       <Image
                         src={validImageUrl}
                         alt={product.name}
                         width={48}
-                        loading="eager"
                         height={48}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          // Fallback if image fails to load
                           const target = e.target as HTMLImageElement;
                           target.style.display = "none";
-                          target.parentElement?.classList.add(
-                            "flex",
-                            "items-center",
-                            "justify-center",
-                          );
                           const fallbackSpan = document.createElement("span");
                           fallbackSpan.textContent = "📦";
                           fallbackSpan.className = "text-2xl";
@@ -215,7 +352,7 @@ export default function AdminProductsPage() {
                       )}
                     </div>
                     <p className="text-xs text-stone-400 truncate">
-                      {product.category} · {product.slug}
+                      {product.category || "Uncategorized"} · {product.slug}
                     </p>
                   </div>
 
@@ -225,23 +362,26 @@ export default function AdminProductsPage() {
                       className="text-sm font-bold"
                       style={{ color: "var(--brand-dark)" }}
                     >
-                      ৳{product.price.toLocaleString()}
+                      ৳{product.price?.toLocaleString() || 0}
                     </p>
-                    {product.originalPrice && (
-                      <p className="text-xs text-stone-400 line-through">
-                        ৳{product.originalPrice.toLocaleString()}
-                      </p>
-                    )}
+                    {product.originalPrice &&
+                      product.originalPrice > product.price && (
+                        <p className="text-xs text-stone-400 line-through">
+                          ৳{product.originalPrice.toLocaleString()}
+                        </p>
+                      )}
                   </div>
 
                   {/* Stock */}
                   <div className="md:text-right">
                     <p
                       className={`text-sm font-semibold ${
-                        product.stock <= 3 ? "text-red-500" : "text-stone-600"
+                        (product.stock || 0) <= 3
+                          ? "text-red-500"
+                          : "text-stone-600"
                       }`}
                     >
-                      {product.stock}
+                      {product.stock ?? 0}
                     </p>
                     <p className="text-xs text-stone-400">in stock</p>
                   </div>
@@ -249,7 +389,7 @@ export default function AdminProductsPage() {
                   {/* Sold */}
                   <div className="md:text-right">
                     <p className="text-sm font-semibold text-stone-600">
-                      {product.totalSold}
+                      {product.totalSold ?? 0}
                     </p>
                     <p className="text-xs text-stone-400">sold</p>
                   </div>
@@ -276,13 +416,14 @@ export default function AdminProductsPage() {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => handleDelete(product.id)}
-                          className="px-2 py-1 rounded-lg text-xs font-medium bg-red-50 text-red-600 hover:bg-red-100"
+                          disabled={isDeleting}
+                          className="px-2 py-1 rounded-lg text-xs font-medium bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          Confirm
+                          {isDeleting ? "Deleting..." : "Confirm"}
                         </button>
                         <button
                           onClick={() => setDeleteConfirm(null)}
-                          className="px-2 py-1 rounded-lg text-xs font-medium bg-stone-100 text-stone-500"
+                          className="px-2 py-1 rounded-lg text-xs font-medium bg-stone-100 text-stone-500 hover:bg-stone-200"
                         >
                           Cancel
                         </button>
@@ -290,7 +431,8 @@ export default function AdminProductsPage() {
                     ) : (
                       <button
                         onClick={() => setDeleteConfirm(product.id)}
-                        className="p-2 rounded-lg hover:bg-red-50 transition-colors text-stone-400 hover:text-red-500"
+                        disabled={isDeleting}
+                        className="p-2 rounded-lg hover:bg-red-50 transition-colors text-stone-400 hover:text-red-500 disabled:opacity-50"
                       >
                         <Trash2 size={15} />
                       </button>
@@ -302,6 +444,14 @@ export default function AdminProductsPage() {
           </div>
         )}
       </div>
+
+      {/* Refetch on visibility (optional) */}
+      {isFetching && !isLoading && (
+        <div className="fixed bottom-4 right-4 bg-stone-800 text-white text-xs px-3 py-2 rounded-full shadow-lg flex items-center gap-2">
+          <RefreshCw size={12} className="animate-spin" />
+          Syncing...
+        </div>
+      )}
     </div>
   );
 }

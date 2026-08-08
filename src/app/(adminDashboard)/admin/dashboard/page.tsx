@@ -54,7 +54,7 @@ function timeAgo(dateStr: string): string {
   return `${days}d ago`;
 }
 
-export default function AdminDashboard() {
+export default function AdminDashboardPage() {
   const [orders, setOrders] = useState<AdminOrder[]>([]);
   const [stats, setStats] = useState({
     totalRevenue: 0,
@@ -67,6 +67,7 @@ export default function AdminDashboard() {
     const o = getOrders();
     const p = getAdminProducts();
     const d = getDiscounts();
+
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setOrders(o);
     setStats({
@@ -197,10 +198,9 @@ export default function AdminDashboard() {
                 return (
                   <Link
                     key={order.id}
-                    href={`/admin/dashboard/orders`}
+                    href="/admin/dashboard/orders"
                     className="flex items-center gap-3 px-5 py-3.5 hover:bg-stone-50 transition-colors"
                   >
-                    {/* Product thumb */}
                     <div
                       className="w-10 h-10 rounded-xl overflow-hidden shrink-0"
                       style={{ backgroundColor: "var(--brand-sand)" }}
@@ -211,7 +211,7 @@ export default function AdminDashboard() {
                         width={40}
                         height={40}
                         loading="eager"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        sizes="40px"
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -298,7 +298,6 @@ export default function AdminDashboard() {
             })}
           </div>
 
-          {/* Quick links */}
           <div className="mt-5 pt-5 border-t border-stone-100 space-y-2">
             <p className="text-xs font-semibold text-stone-400 uppercase tracking-wide mb-3">
               Quick Actions
@@ -309,7 +308,11 @@ export default function AdminDashboard() {
                 label: "Add New Product",
                 icon: Package,
               },
-              { href: "/admin/dashboard/discounts", label: "Create Discount", icon: Tag },
+              {
+                href: "/admin/dashboard/discounts",
+                label: "Create Discount",
+                icon: Tag,
+              },
               {
                 href: "/admin/dashboard/banners",
                 label: "Manage Banners",
